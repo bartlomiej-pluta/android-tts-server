@@ -15,29 +15,27 @@ import io.bartek.R
 import io.bartek.web.TTSServer
 
 class WebService : Service() {
+    private var port: Int = 8080
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
     private var ttsServer: TTSServer? = null
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("TTSService", "Service has been created")
         startForeground(1, createNotification())
     }
 
     private fun createNotification(): Notification {
-        val notificationChannelId = "HTTP SERVER CHANNEL"
-
         // depending on the Android API that we're dealing with we will have
         // to use a specific method to create the notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
             val channel = NotificationChannel(
-                notificationChannelId,
-                "HTTP Server",
+                NOTIFICATION_CHANNEL_ID,
+                resources.getString(R.string.service_notification_category_name),
                 NotificationManager.IMPORTANCE_HIGH
             ).let {
-                it.description = "HTTP Server channel with keeps the service running"
+                it.description = resources.getString(R.string.service_notification_category_description)
                 it.enableLights(true)
                 it.lightColor = Color.RED
                 it.enableVibration(true)
@@ -53,12 +51,12 @@ class WebService : Service() {
 
         val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(
             this,
-            notificationChannelId
+            NOTIFICATION_CHANNEL_ID
         ) else Notification.Builder(this)
 
         return builder
-            .setContentTitle("Endless Service")
-            .setContentText("This is your favorite endless service working")
+            .setContentTitle(resources.getString(R.string.service_notification_title))
+            .setContentText(resources.getString(R.string.service_notification_text, port))
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker("Ticker text")
@@ -66,16 +64,15 @@ class WebService : Service() {
             .build()
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        Log.d("TTSService", "Something is willing to bind the service")
-        return null
-    }
+    override fun onBind(intent: Intent) = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("TTSService", "onStartCommand with startId: $startId")
         intent?.let {
             when(it.action) {
-                START -> startService(it.getIntExtra(PORT, 8080))
+                START -> {
+                    port = it.getIntExtra(PORT, port)
+                    startService()
+                }
                 STOP -> stopService()
             }
         }
@@ -87,13 +84,12 @@ class WebService : Service() {
         ttsServer = null
     }
 
-    private fun startService(port: Int) {
+    private fun startService() {
         if(isServiceStarted) return
-        Log.d("TTSService", "Starting service...")
         isServiceStarted = true
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "EndlessService::lock").apply {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WebService::lock").apply {
                     acquire()
                 }
             }
@@ -101,7 +97,6 @@ class WebService : Service() {
     }
 
     private fun stopService() {
-        Log.d("TTSService", "Stopping service...")
         ttsServer?.stop()
         ttsServer = null
         wakeLock?.let {
@@ -115,6 +110,7 @@ class WebService : Service() {
     }
 
     companion object {
+        private const val NOTIFICATION_CHANNEL_ID = "TTSService.NOTIFICATION_CHANNEL"
         const val PORT = "TTSService.PORT"
         const val START = "START"
         const val STOP = "STOP"

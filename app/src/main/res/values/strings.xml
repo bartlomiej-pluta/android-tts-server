@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">TTSServer</string>
+    <string name="app_name">TTS Server</string>
+    <string name="service_notification_category_name">HTTP Server</string>
+    <string name="service_notification_category_description">The fixed notification keeping the HTTP server alive</string>
+    <string name="service_notification_title">Server is running</string>
+    <string name="service_notification_text">The HTTP server is listening on port %1$d</string>
+
+    <string name="server_toast_service_started">TTS-HTTP Server started</string>
+    <string name="server_toast_service_stopped">TTS-HTTP Server stopped</string>
+
+    <string name="main_activity_server_port">Server port</string>
+    <string name="main_activity_run">Run</string>
+    <string name="main_activity_stop">Stop</string>
+    <string name="main_activity_tts_settings">TTS Settings</string>
 </resources>

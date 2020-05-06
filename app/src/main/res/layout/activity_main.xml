@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="Server port"
+            android:hint="@string/main_activity_server_port"
             android:inputType="number"
             android:text="8080" />
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:onClick="startServer"
-            android:text="Run" />
+            android:text="@string/main_activity_run" />
 
         <Button
             android:id="@+id/stop"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:onClick="stopServer"
-            android:text="Stop" />
+            android:text="@string/main_activity_stop" />
 
     </LinearLayout>
 
@@ -44,5 +44,5 @@
         android:id="@+id/ttsSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TTS Settings" />
+        android:text="@string/main_activity_tts_settings" />
 </LinearLayout>
