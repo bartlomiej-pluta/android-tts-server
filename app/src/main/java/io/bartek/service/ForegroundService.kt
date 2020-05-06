@@ -1,20 +1,16 @@
-package io.bartek.tts
+package io.bartek.service
 
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.os.IBinder
 import android.os.PowerManager
-import android.telephony.ServiceState
-import android.util.Log
-import android.widget.Toast
 import io.bartek.MainActivity
 import io.bartek.R
 import io.bartek.web.TTSServer
 
-class WebService : Service() {
+class ForegroundService : Service() {
     private var port: Int = 8080
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false

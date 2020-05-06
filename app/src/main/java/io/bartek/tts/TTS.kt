@@ -3,6 +3,7 @@ package io.bartek.tts
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import io.bartek.exception.TTSException
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.InputStream
@@ -28,7 +29,7 @@ class TTS(context: Context, initListener: TextToSpeech.OnInitListener) {
         }
 
         if (!lock.success) {
-            throw RuntimeException("TTS failed")
+            throw TTSException()
         }
 
         val stream = BufferedInputStream(FileInputStream(file))
@@ -42,8 +43,10 @@ class TTS(context: Context, initListener: TextToSpeech.OnInitListener) {
 
 private data class Lock(var success: Boolean = false) : Object()
 
-private class TTSProcessListener(private val uuid: String, private val lock: Lock) :
-    UtteranceProgressListener() {
+private class TTSProcessListener(
+    private val uuid: String,
+    private val lock: Lock
+) : UtteranceProgressListener() {
 
     override fun onDone(utteranceId: String?) {
         if (utteranceId == uuid) {

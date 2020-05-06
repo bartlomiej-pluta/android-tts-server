@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:name=".tts.WebService"
+            android:name=".service.ForegroundService"
             android:enabled="true"
             android:exported="true" />
 

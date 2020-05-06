@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import io.bartek.tts.WebService
+import io.bartek.service.ForegroundService
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,12 +16,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun startServer(view: View) = actionOnService(WebService.START)
+    fun startServer(view: View) = actionOnService(ForegroundService.START)
 
-    fun stopServer(view: View) = actionOnService(WebService.STOP)
+    fun stopServer(view: View) = actionOnService(ForegroundService.STOP)
 
     private fun actionOnService(action: String) {
-        Intent(this, WebService::class.java).also {
+        Intent(this, ForegroundService::class.java).also {
             it.action = action
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
