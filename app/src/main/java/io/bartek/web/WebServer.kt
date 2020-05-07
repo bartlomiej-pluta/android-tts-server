@@ -1,8 +1,10 @@
 package io.bartek.web
 
 import android.content.Context
+import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
 import io.bartek.R
@@ -46,7 +48,7 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
             throw ResponseException(METHOD_NOT_ALLOWED, "")
         }
 
-        if (session.headers["content-type"] ?. let { it != "application/json" } != false) {
+        if (session.headers["content-type"]?.let { it != "application/json" } != false) {
             throw ResponseException(BAD_REQUEST, "")
         }
 
@@ -67,19 +69,19 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
 
     override fun start() {
         super.start()
-        Toast.makeText(
-            context,
-            context.resources.getString(R.string.server_toast_service_started),
-            Toast.LENGTH_SHORT
-        ).show()
+        LocalBroadcastManager
+            .getInstance(context)
+            .sendBroadcast(Intent("io.bartek.web.server.CHANGE_STATE").also {
+                it.putExtra("STATE", "STARTED")
+            })
     }
 
     override fun stop() {
         super.stop()
-        Toast.makeText(
-            context,
-            context.resources.getString(R.string.server_toast_service_stopped),
-            Toast.LENGTH_SHORT
-        ).show()
+        LocalBroadcastManager
+            .getInstance(context)
+            .sendBroadcast(Intent("io.bartek.web.server.CHANGE_STATE").also {
+                it.putExtra("STATE", "STOPPED")
+            })
     }
 }
