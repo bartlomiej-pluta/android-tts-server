@@ -4,11 +4,14 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Binder
 import android.os.Build
+import android.os.IBinder
 import android.os.PowerManager
 import io.bartek.MainActivity
 import io.bartek.R
 import io.bartek.web.TTSServer
+
 
 class ForegroundService : Service() {
     private var port: Int = 8080
@@ -90,6 +93,7 @@ class ForegroundService : Service() {
                 }
             }
         ttsServer = TTSServer(port, this)
+        state = ServiceState.RUNNING
     }
 
     private fun stopService() {
@@ -103,9 +107,14 @@ class ForegroundService : Service() {
             stopForeground(true)
             stopSelf()
         }
+        state = ServiceState.STOPPED
     }
 
     companion object {
+        // Disclaimer: I don't know the better way
+        // to check whether the service is already running
+        // than to place it as a static field
+        var state = ServiceState.STOPPED
         private const val NOTIFICATION_CHANNEL_ID = "TTSService.NOTIFICATION_CHANNEL"
         const val PORT = "TTSService.PORT"
         const val START = "START"

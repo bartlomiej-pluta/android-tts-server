@@ -1,50 +1,41 @@
 package io.bartek
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
-import android.provider.Settings.*
 import android.view.View
-import android.widget.Toast
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.bartek.service.ForegroundService
+import io.bartek.service.ServiceState
+
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var controlServerButton: Button
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let {
-                when(intent.getStringExtra("STATE")) {
-                    "STARTED" -> notifyOnStart()
-                    "STOPPED" -> notifyOnStop()
-                }
+                updateViewAccordingToServiceState(
+                    ServiceState.valueOf(it.getStringExtra("STATE") ?: "STOPPED")
+                )
             }
         }
     }
 
-    private fun notifyOnStart() {
-        Toast.makeText(
-            this,
-            resources.getString(R.string.server_toast_service_started),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun notifyOnStop() {
-        Toast.makeText(
-            this,
-            resources.getString(R.string.server_toast_service_stopped),
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun updateViewAccordingToServiceState(newState: ServiceState) {
+        controlServerButton.isEnabled = true
+        when (newState) {
+            ServiceState.STOPPED -> controlServerButton.text = getString(R.string.main_activity_run)
+            ServiceState.RUNNING -> controlServerButton.text = getString(R.string.main_activity_stop)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        controlServerButton = findViewById(R.id.control_server_button)
     }
 
     override fun onResume() {
@@ -52,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager
             .getInstance(this)
             .registerReceiver(receiver, IntentFilter("io.bartek.web.server.CHANGE_STATE"))
+        updateViewAccordingToServiceState(ForegroundService.state)
     }
 
     override fun onPause() {
@@ -61,11 +53,15 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    fun startServer(view: View) = actionOnService(ForegroundService.START)
-
-    fun stopServer(view: View) = actionOnService(ForegroundService.STOP)
-
     fun openTTSSettings(view: View) = startActivity(Intent("com.android.settings.TTS_SETTINGS"))
+
+    fun controlServer(view: View) {
+        controlServerButton.isEnabled = false
+        when (ForegroundService.state) {
+            ServiceState.STOPPED -> actionOnService(ForegroundService.START)
+            ServiceState.RUNNING -> actionOnService(ForegroundService.STOP)
+        }
+    }
 
     private fun actionOnService(action: String) {
         Intent(this, ForegroundService::class.java).also {
@@ -78,6 +74,4 @@ class MainActivity : AppCompatActivity() {
             startService(it)
         }
     }
-
-
 }

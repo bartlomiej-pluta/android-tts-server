@@ -8,6 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
 import io.bartek.R
+import io.bartek.service.ServiceState
 import io.bartek.tts.TTS
 import org.json.JSONObject
 import java.util.*
@@ -72,7 +73,7 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
         LocalBroadcastManager
             .getInstance(context)
             .sendBroadcast(Intent("io.bartek.web.server.CHANGE_STATE").also {
-                it.putExtra("STATE", "STARTED")
+                it.putExtra("STATE", ServiceState.RUNNING.name)
             })
     }
 
@@ -81,7 +82,7 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
         LocalBroadcastManager
             .getInstance(context)
             .sendBroadcast(Intent("io.bartek.web.server.CHANGE_STATE").also {
-                it.putExtra("STATE", "STOPPED")
+                it.putExtra("STATE", ServiceState.STOPPED.name)
             })
     }
 }

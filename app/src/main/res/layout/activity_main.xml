@@ -12,32 +12,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/port"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/main_activity_server_port"
-            android:inputType="number"
-            android:text="8080" />
-
         <Button
-            android:id="@+id/run"
+            android:id="@+id/control_server_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:onClick="startServer"
+            android:onClick="controlServer"
             android:text="@string/main_activity_run" />
-
-        <Button
-            android:id="@+id/stop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:onClick="stopServer"
-            android:text="@string/main_activity_stop" />
-
     </LinearLayout>
 
     <Button
