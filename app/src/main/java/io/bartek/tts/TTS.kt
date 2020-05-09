@@ -15,7 +15,7 @@ data class SpeechData(val stream: InputStream, val size: Long)
 class TTS(context: Context, initListener: TextToSpeech.OnInitListener) {
     private val tts = TextToSpeech(context, initListener)
 
-    fun performTTS(text: String, language: Locale): SpeechData {
+    fun fetchTTSStream(text: String, language: Locale): SpeechData {
         val file = createTempFile("tmp_tts_server", ".wav")
 
         val uuid = UUID.randomUUID().toString()
@@ -38,6 +38,22 @@ class TTS(context: Context, initListener: TextToSpeech.OnInitListener) {
         file.delete()
 
         return SpeechData(stream, length)
+    }
+
+    fun performTTS(text: String, language: Locale) {
+        val uuid = UUID.randomUUID().toString()
+        val lock = Lock()
+        tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
+
+        synchronized(lock) {
+            tts.language = language
+            tts.speak(text, TextToSpeech.QUEUE_ADD, null, uuid)
+            lock.wait()
+        }
+
+        if(!lock.success) {
+            throw TTSException()
+        }
     }
 }
 

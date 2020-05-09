@@ -25,6 +25,7 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
             session?.let {
                 return when(it.uri) {
                     "/wave" -> wave(it)
+                    "/say" -> say(it)
                     else -> throw ResponseException(NOT_FOUND, "")
                 }
             }
@@ -51,8 +52,26 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
         }
 
         val (text, language) = getRequestData(session)
-        val (stream, size) = tts.performTTS(text, language)
+        val (stream, size) = tts.fetchTTSStream(text, language)
         return newFixedLengthResponse(OK, "audio/x-wav", stream, size)
+    }
+
+    private fun say(session: IHTTPSession): Response {
+        if(!preferences.getBoolean("preference_enable_say_endpoint", true)) {
+            throw ResponseException(NOT_FOUND, "")
+        }
+
+        if (session.method != Method.POST) {
+            throw ResponseException(METHOD_NOT_ALLOWED, "")
+        }
+
+        if (session.headers["content-type"]?.let { it != "application/json" } != false) {
+            throw ResponseException(BAD_REQUEST, "")
+        }
+
+        val (text, language) = getRequestData(session)
+        tts.performTTS(text, language)
+        return newFixedLengthResponse(OK, MIME_PLAINTEXT, "")
     }
 
     private fun getRequestData(session: IHTTPSession): TTSRequestData {
