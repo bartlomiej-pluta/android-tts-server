@@ -3,6 +3,8 @@
 
     <string name="main_activity_run">Run</string>
     <string name="main_activity_stop">Stop</string>
+    <string name="main_activity_prompt_to_run">Tap power on button to run the server</string>
+    <string name="main_activity_prompt_to_stop">Tap power off button to stop the server</string>
 
     <string name="service_notification_category_name">HTTP Server</string>
     <string name="service_notification_category_description">The fixed notification keeping the HTTP server alive</string>

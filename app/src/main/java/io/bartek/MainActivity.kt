@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.bartek.preference.PreferencesActivity
 import io.bartek.service.ForegroundService
@@ -15,7 +17,8 @@ import io.bartek.service.ServiceState
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var controlServerButton: Button
+    private lateinit var controlServerButton: AppCompatImageButton
+    private lateinit var promptText: TextView
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,8 +46,14 @@ class MainActivity : AppCompatActivity() {
     private fun updateViewAccordingToServiceState(newState: ServiceState) {
         controlServerButton.isEnabled = true
         when (newState) {
-            ServiceState.STOPPED -> controlServerButton.text = getString(R.string.main_activity_run)
-            ServiceState.RUNNING -> controlServerButton.text = getString(R.string.main_activity_stop)
+            ServiceState.STOPPED -> {
+                controlServerButton.setImageResource(R.drawable.ic_power_off)
+                promptText.text = getString(R.string.main_activity_prompt_to_run)
+            }
+            ServiceState.RUNNING -> {
+                controlServerButton.setImageResource(R.drawable.ic_power_on)
+                promptText.text = getString(R.string.main_activity_prompt_to_stop)
+            }
         }
     }
 
@@ -52,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         controlServerButton = findViewById(R.id.control_server_button)
+        promptText = findViewById(R.id.prompt_text)
     }
 
     override fun onResume() {

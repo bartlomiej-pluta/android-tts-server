@@ -7,11 +7,19 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
+    <TextView
+        android:id="@+id/prompt_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/main_activity_prompt_to_run"
+        android:textAlignment="center" />
+
+    <ImageButton
         android:id="@+id/control_server_button"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="match_parent"
+        android:background="#00000000"
         android:onClick="controlServer"
-        android:text="@string/main_activity_run" />
+        app:srcCompat="@drawable/ic_power_off" />
 </LinearLayout>
