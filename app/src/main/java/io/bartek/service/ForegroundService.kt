@@ -22,7 +22,7 @@ class ForegroundService : Service() {
     private var isServiceStarted = false
     private var ttsServer: TTSServer? = null
     private val port: Int
-        get() = parseInt(preferences.getString("preference_port", "8080")!!)
+        get() = preferences.getInt("preference_port", 8080)
 
     override fun onCreate() {
         super.onCreate()

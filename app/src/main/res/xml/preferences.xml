@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/preference_category_server" app:iconSpaceReserved="false">
-        <EditTextPreference
+        <io.bartek.preference.IntEditTextPreference
             android:defaultValue="8080"
             android:inputType="number"
             android:key="preference_port"
