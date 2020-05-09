@@ -63,7 +63,7 @@ class ForegroundService : Service() {
             .setContentTitle(resources.getString(R.string.service_notification_title))
             .setContentText(resources.getString(R.string.service_notification_text, port))
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_foreground_service)
             .setTicker("Ticker text")
             .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
             .build()
