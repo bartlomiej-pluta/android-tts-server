@@ -3,24 +3,30 @@ package io.bartek.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import androidx.preference.PreferenceManager
 import io.bartek.MainActivity
 import io.bartek.R
 import io.bartek.web.TTSServer
+import java.lang.Integer.parseInt
 
 
 class ForegroundService : Service() {
-    private var port: Int = 8080
+    private lateinit var preferences: SharedPreferences
     private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
     private var ttsServer: TTSServer? = null
+    private val port: Int
+        get() = parseInt(preferences.getString("preference_port", "8080")!!)
 
     override fun onCreate() {
         super.onCreate()
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
         startForeground(1, createNotification())
     }
 
@@ -68,10 +74,7 @@ class ForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when(it.action) {
-                START -> {
-                    port = it.getIntExtra(PORT, port)
-                    startService()
-                }
+                START -> startService()
                 STOP -> stopService()
             }
         }

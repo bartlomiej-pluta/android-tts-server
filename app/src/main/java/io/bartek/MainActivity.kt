@@ -3,10 +3,13 @@ package io.bartek
 import android.content.*
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import io.bartek.preference.PreferencesActivity
 import io.bartek.service.ForegroundService
 import io.bartek.service.ServiceState
 
@@ -22,6 +25,19 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.open_preferences -> startActivity(Intent(this, PreferencesActivity::class.java))
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun updateViewAccordingToServiceState(newState: ServiceState) {
@@ -52,8 +68,6 @@ class MainActivity : AppCompatActivity() {
             .unregisterReceiver(receiver)
         super.onPause()
     }
-
-    fun openTTSSettings(view: View) = startActivity(Intent("com.android.settings.TTS_SETTINGS"))
 
     fun controlServer(view: View) {
         controlServerButton.isEnabled = false

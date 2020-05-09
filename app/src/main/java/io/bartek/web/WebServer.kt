@@ -3,11 +3,10 @@ package io.bartek.web
 import android.content.Context
 import android.content.Intent
 import android.speech.tts.TextToSpeech
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
-import io.bartek.R
 import io.bartek.service.ServiceState
 import io.bartek.tts.TTS
 import org.json.JSONObject
@@ -18,11 +17,19 @@ private data class TTSRequestData(val text: String, val language: Locale)
 
 class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
     TextToSpeech.OnInitListener {
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val tts = TTS(context, this)
 
     override fun serve(session: IHTTPSession?): Response {
         try {
-            return tryToServe(session)
+            session?.let {
+                return when(it.uri) {
+                    "/wave" -> wave(it)
+                    else -> throw ResponseException(NOT_FOUND, "")
+                }
+            }
+
+            throw ResponseException(BAD_REQUEST, "")
         } catch (e: ResponseException) {
             throw e
         } catch (e: Exception) {
@@ -30,18 +37,8 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
         }
     }
 
-    private fun tryToServe(session: IHTTPSession?): Response {
-        val (text, language) = getRequestData(validateRequest(session))
-        val (stream, size) = tts.performTTS(text, language)
-        return newFixedLengthResponse(OK, "audio/x-wav", stream, size)
-    }
-
-    private fun validateRequest(session: IHTTPSession?): IHTTPSession {
-        if (session == null) {
-            throw ResponseException(BAD_REQUEST, "")
-        }
-
-        if (session.uri != "/") {
+    private fun wave(session: IHTTPSession): Response {
+        if(!preferences.getBoolean("preference_enable_wave_endpoint", true)) {
             throw ResponseException(NOT_FOUND, "")
         }
 
@@ -53,8 +50,9 @@ class TTSServer(port: Int, private val context: Context) : NanoHTTPD(port),
             throw ResponseException(BAD_REQUEST, "")
         }
 
-
-        return session
+        val (text, language) = getRequestData(session)
+        val (stream, size) = tts.performTTS(text, language)
+        return newFixedLengthResponse(OK, "audio/x-wav", stream, size)
     }
 
     private fun getRequestData(session: IHTTPSession): TTSRequestData {

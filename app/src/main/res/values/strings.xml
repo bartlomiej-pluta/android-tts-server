@@ -1,12 +1,23 @@
 <resources>
     <string name="app_name">TTS Server</string>
+
+    <string name="main_activity_run">Run</string>
+    <string name="main_activity_stop">Stop</string>
+
     <string name="service_notification_category_name">HTTP Server</string>
     <string name="service_notification_category_description">The fixed notification keeping the HTTP server alive</string>
     <string name="service_notification_title">Server is running</string>
     <string name="service_notification_text">The HTTP server is listening on port %1$d</string>
 
-    <string name="main_activity_server_port">Server port</string>
-    <string name="main_activity_run">Run</string>
-    <string name="main_activity_stop">Stop</string>
-    <string name="main_activity_tts_settings">TTS Settings</string>
+    <string name="title_activity_preferences">Settings</string>
+    <string name="preference_port_summary">The desired port on which HTTP server is intended to listening</string>
+    <string name="preference_port_title">Server port</string>
+    <string name="preference_enable_say_endpoint_summary">Allow HTTP clients to use /say endpoint which enables them to say message using builtin speakers or external ones connected to the device</string>
+    <string name="preference_enable_say_endpoint_title">Enable /say endpoint</string>
+    <string name="preference_enable_wave_endpoint_summary">Allow HTTP clients to use /wave endpoint which enables them to retrieve TTS message as wave file</string>
+    <string name="preference_enable_wave_endpoint_title">Enable /wave endpoint</string>
+    <string name="preference_tts_summary">Go to platform\'s TTS engine settings and adjust its parameters</string>
+    <string name="preference_tts_title">TTS engine settings</string>
+    <string name="preference_category_tts">TTS engine</string>
+    <string name="preference_category_server">Server</string>
 </resources>
