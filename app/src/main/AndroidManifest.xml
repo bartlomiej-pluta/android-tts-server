@@ -2,9 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.bartek">
 
+    <permission
+        android:name="io.bartek.permission.TTS_HTTP_SERVICE"
+        android:description="@string/permission_http_server_description"
+        android:label="@string/permission_http_server_label"
+        android:protectionLevel="normal" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="io.bartek.permission.TTS_HTTP_SERVICE" />
 
     <application
         android:allowBackup="false"
@@ -25,7 +32,8 @@
         <service
             android:name=".service.ForegroundService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="io.bartek.permission.TTS_HTTP_SERVICE" />
 
         <activity
             android:name=".MainActivity"

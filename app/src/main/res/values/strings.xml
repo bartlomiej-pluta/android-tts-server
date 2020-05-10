@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">TTS Server</string>
 
+    <string name="permission_http_server_label">booting up TTS HTTP server</string>
+    <string name="permission_http_server_description">Allows application to run HTTP server which provides a TTS services.</string>
+
     <string name="main_activity_run">Run</string>
     <string name="main_activity_stop">Stop</string>
     <string name="main_activity_prompt_to_run">Tap power on button to run the server</string>
