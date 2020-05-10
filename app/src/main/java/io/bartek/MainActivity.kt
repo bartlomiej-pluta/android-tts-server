@@ -1,16 +1,19 @@
 package io.bartek
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import io.bartek.help.HelpActivity
 import io.bartek.preference.PreferencesActivity
 import io.bartek.service.ForegroundService
 import io.bartek.service.ServiceState
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.open_preferences -> startActivity(Intent(this, PreferencesActivity::class.java))
+            R.id.open_help -> startActivity(Intent(this, HelpActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

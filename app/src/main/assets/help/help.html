@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TTS Server - Help</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+<h1>What is it?</h1>
+<p>
+    TTS Server is an Android-only application that provides a REST-based interface for on-board
+    TTS engine of your device. The application is aimed on home automation and allows you to give
+    a second life to your old smartphone, which can now act as a standalone, all-inclusive web TTS
+    provider for your speech-based home notification system.</p>
+
+<h1>For what?</h1>
+<p>
+    Android is provided with a great <b>offline</b> TTS engine for almost every language on the
+    world.
+    If you care about high availability of the web TTS provider or you don't want your notifications
+    go through the Internet to the cloud providers, you can utilise your smartphone to done the job.
+</p>
+
+<h1>How does it work?</h1>
+<p>
+    TTS Server runs a service with HTTP server that exposes endpoints allowing you
+    to perform TTS task. As the Android implements its own process-killer, the application needs
+    to run the service <b>on the foreground</b> (so the notification is always shown)
+    keeping it alive and preventing it from being killed. Because of that, keep in mind that
+    the application might drain your battery, so it is recommended to use it <b>only</b>
+    on the devices being always connected to the power source.
+</p>
+
+<h1>Consuming REST interface</h1>
+<p>
+    So far, the application provides two endpoints: <code>/say</code> and <code>/wave</code>.
+    Each endpoint works with JSON-based body, so each request requires a proper 
+    <code>Content-Type</code> header.
+</p>
+
+<h2>The <code>/say</code> endpoint</h2>
+<pre>
+POST /say
+{
+    "text": "The text to be spoken",
+    "language": "en_US"
+}
+</pre>
+<p><b>Returns:</b> <code>200 OK</code> with empty body</p>
+<p>
+    The <code>/say</code> endpoint allows you to perform TTS task using device's speakers or the
+    external ones connected to it via jack, Bluetooth etc. For example if you have some 
+    old PC-speakers you are able to connect your device to them via line port and 
+    get a complete speech-based notification system.
+</p>
+
+<h2>The <code>/wave</code> endpoint</h2>
+<pre>
+POST /wave
+{
+    "text": "The text to be spoken",
+    "language": "en_US"
+}
+</pre>
+<p><b>Returns:</b> <code>200 OK</code> with wave file (<code>Content-Type: audio/x-wav</code>)</p>
+<p>
+    The <code>/wave</code> endpoint enables you to download a wav file containing speech of the
+    provided text. The goal of this endpoint is to provide interface allowing you establishment
+    of the connection between the TTS Server and some other kind of already running TTS system,
+    which can invoke the HTTP request to your Android device and do something with returned
+    wav file. For example, take a look at
+    <a href="https://github.com/bartlomiej-pluta/node-sonos-http-api">my fork</a> of great
+    <a href="https://github.com/jishi/node-sonos-http-api">Node Sonos HTTP API</a>.
+    I've already written a TTS plugin in my fork allowing me to connect the TTS Server and my
+    Sonos speakers right through the Node Sonos HTTP API, which performs the request
+    to the Android device and puts returned wav file on the Sonos speakers.
+</p>
+</body>
+</html>

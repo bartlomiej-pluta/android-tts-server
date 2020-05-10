@@ -2,7 +2,6 @@ package io.bartek.preference
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceFragmentCompat
 import io.bartek.R
 
 class PreferencesActivity : AppCompatActivity() {
