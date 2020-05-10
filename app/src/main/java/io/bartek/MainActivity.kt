@@ -27,7 +27,9 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let {
                 updateViewAccordingToServiceState(
-                    ServiceState.valueOf(it.getStringExtra("STATE") ?: "STOPPED")
+                    ServiceState.valueOf(
+                        it.getStringExtra(ForegroundService.STATE) ?: ServiceState.STOPPED.name
+                    )
                 )
             }
         }
@@ -39,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.open_preferences -> startActivity(Intent(this, PreferencesActivity::class.java))
             R.id.open_help -> startActivity(Intent(this, HelpActivity::class.java))
         }
@@ -72,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         LocalBroadcastManager
             .getInstance(this)
-            .registerReceiver(receiver, IntentFilter("io.bartek.web.server.CHANGE_STATE"))
+            .registerReceiver(receiver, IntentFilter(ForegroundService.CHANGE_STATE))
         updateViewAccordingToServiceState(ForegroundService.state)
     }
 

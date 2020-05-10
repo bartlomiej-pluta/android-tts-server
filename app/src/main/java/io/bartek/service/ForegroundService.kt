@@ -5,15 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.os.Binder
 import android.os.Build
-import android.os.IBinder
 import android.os.PowerManager
 import androidx.preference.PreferenceManager
 import io.bartek.MainActivity
 import io.bartek.R
+import io.bartek.preference.PreferenceKey
 import io.bartek.web.TTSServer
-import java.lang.Integer.parseInt
 
 
 class ForegroundService : Service() {
@@ -22,7 +20,7 @@ class ForegroundService : Service() {
     private var isServiceStarted = false
     private var ttsServer: TTSServer? = null
     private val port: Int
-        get() = preferences.getInt("preference_port", 8080)
+        get() = preferences.getInt(PreferenceKey.PORT, 8080)
 
     override fun onCreate() {
         super.onCreate()
@@ -91,7 +89,7 @@ class ForegroundService : Service() {
         isServiceStarted = true
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WebService::lock").apply {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG).apply {
                     acquire()
                 }
             }
@@ -119,7 +117,9 @@ class ForegroundService : Service() {
         // than to place it as a static field
         var state = ServiceState.STOPPED
         private const val NOTIFICATION_CHANNEL_ID = "TTSService.NOTIFICATION_CHANNEL"
-        const val PORT = "TTSService.PORT"
+        private const val WAKELOCK_TAG = "ForegroundService::lock"
+        const val CHANGE_STATE = "io.bartek.service.CHANGE_STATE"
+        const val STATE = "STATE"
         const val START = "START"
         const val STOP = "STOP"
     }

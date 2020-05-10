@@ -24,7 +24,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let {
                 updateViewAccordingToServiceState(
-                    ServiceState.valueOf(it.getStringExtra("STATE") ?: "STOPPED")
+                    ServiceState.valueOf(
+                        it.getStringExtra(ForegroundService.STATE) ?: ServiceState.STOPPED.name
+                    )
                 )
             }
         }
@@ -38,7 +40,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         super.onResume()
         LocalBroadcastManager
             .getInstance(context!!)
-            .registerReceiver(receiver, IntentFilter("io.bartek.web.server.CHANGE_STATE"))
+            .registerReceiver(receiver, IntentFilter(ForegroundService.CHANGE_STATE))
         updateViewAccordingToServiceState(ForegroundService.state)
     }
 
@@ -51,15 +53,19 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        portPreference = findPreference("preference_port")!!
+        portPreference = findPreference(PreferenceKey.PORT)!!
         portPreference.setOnBindEditTextListener { it.inputType = InputType.TYPE_CLASS_NUMBER }
-        sayEndpointPreference = findPreference("preference_enable_say_endpoint")!!
-        waveEndpointPreference = findPreference("preference_enable_wave_endpoint")!!
-        ttsEnginePreference = findPreference("preference_tts")!!
+        sayEndpointPreference = findPreference(PreferenceKey.ENABLE_SAY_ENDPOINT)!!
+        waveEndpointPreference = findPreference(PreferenceKey.ENABLE_WAVE_ENDPOINT)!!
+        ttsEnginePreference = findPreference(PreferenceKey.TTS)!!
         ttsEnginePreference.setOnPreferenceClickListener {
-            startActivity(Intent("com.android.settings.TTS_SETTINGS"))
+            startActivity(Intent(ANDROID_TTS_SETTINGS))
             true
         }
         updateViewAccordingToServiceState(ForegroundService.state)
+    }
+
+    companion object {
+        private const val ANDROID_TTS_SETTINGS = "com.android.settings.TTS_SETTINGS"
     }
 }
