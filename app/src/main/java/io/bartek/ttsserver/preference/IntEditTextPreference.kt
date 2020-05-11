@@ -1,4 +1,4 @@
-package io.bartek.preference
+package io.bartek.ttsserver.preference
 
 import android.content.Context
 import android.util.AttributeSet

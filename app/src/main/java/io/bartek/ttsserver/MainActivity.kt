@@ -1,4 +1,4 @@
-package io.bartek
+package io.bartek.ttsserver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,10 +13,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import io.bartek.help.HelpActivity
-import io.bartek.preference.PreferencesActivity
-import io.bartek.service.ForegroundService
-import io.bartek.service.ServiceState
+import io.bartek.R
+import io.bartek.ttsserver.help.HelpActivity
+import io.bartek.ttsserver.preference.PreferencesActivity
+import io.bartek.ttsserver.service.ForegroundService
+import io.bartek.ttsserver.service.ServiceState
 
 
 class MainActivity : AppCompatActivity() {

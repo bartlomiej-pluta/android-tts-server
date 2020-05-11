@@ -1,4 +1,4 @@
-package io.bartek.help
+package io.bartek.ttsserver.help
 
 import android.os.Bundle
 import android.webkit.WebView

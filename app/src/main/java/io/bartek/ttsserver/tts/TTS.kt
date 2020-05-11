@@ -1,9 +1,9 @@
-package io.bartek.tts
+package io.bartek.ttsserver.tts
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import io.bartek.exception.TTSException
+import io.bartek.ttsserver.exception.TTSException
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.InputStream

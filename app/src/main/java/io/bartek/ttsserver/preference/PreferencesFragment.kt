@@ -1,4 +1,4 @@
-package io.bartek.preference
+package io.bartek.ttsserver.preference
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,8 +11,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import io.bartek.R
-import io.bartek.service.ForegroundService
-import io.bartek.service.ServiceState
+import io.bartek.ttsserver.service.ForegroundService
+import io.bartek.ttsserver.service.ServiceState
 
 class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var portPreference: IntEditTextPreference

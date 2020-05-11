@@ -1,4 +1,4 @@
-package io.bartek.service
+package io.bartek.ttsserver.service
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -7,8 +7,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.PowerManager
 import androidx.preference.PreferenceManager
-import io.bartek.preference.PreferenceKey
-import io.bartek.web.WebServer
+import io.bartek.ttsserver.preference.PreferenceKey
+import io.bartek.ttsserver.web.WebServer
 
 
 class ForegroundService : Service() {
@@ -79,7 +79,7 @@ class ForegroundService : Service() {
       var state = ServiceState.STOPPED
 
       private const val WAKELOCK_TAG = "ForegroundService::lock"
-      const val CHANGE_STATE = "io.bartek.service.CHANGE_STATE"
+      const val CHANGE_STATE = "io.bartek.ttsserver.service.CHANGE_STATE"
       const val STATE = "STATE"
       const val START = "START"
       const val STOP = "STOP"

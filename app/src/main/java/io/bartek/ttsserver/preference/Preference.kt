@@ -1,4 +1,4 @@
-package io.bartek.preference
+package io.bartek.ttsserver.preference
 
 
 object PreferenceKey {

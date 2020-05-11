@@ -1,4 +1,4 @@
-package io.bartek.service
+package io.bartek.ttsserver.service
 
 enum class ServiceState {
    RUNNING,

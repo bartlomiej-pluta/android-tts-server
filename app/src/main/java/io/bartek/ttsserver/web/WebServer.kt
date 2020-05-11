@@ -1,4 +1,4 @@
-package io.bartek.web
+package io.bartek.ttsserver.web
 
 import android.content.Context
 import android.content.Intent
@@ -7,10 +7,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
-import io.bartek.preference.PreferenceKey
-import io.bartek.service.ForegroundService
-import io.bartek.service.ServiceState
-import io.bartek.tts.TTS
+import io.bartek.ttsserver.preference.PreferenceKey
+import io.bartek.ttsserver.service.ForegroundService
+import io.bartek.ttsserver.service.ServiceState
+import io.bartek.ttsserver.tts.TTS
 import org.json.JSONObject
 import java.util.*
 

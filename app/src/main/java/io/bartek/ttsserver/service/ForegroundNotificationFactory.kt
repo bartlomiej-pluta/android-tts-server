@@ -1,4 +1,4 @@
-package io.bartek.service
+package io.bartek.ttsserver.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -8,8 +8,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import io.bartek.MainActivity
 import io.bartek.R
+import io.bartek.ttsserver.MainActivity
 
 class ForegroundNotificationFactory(private val context: Context) {
    private val oreo: Boolean
