@@ -5,14 +5,45 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.bartek.ttsserver.exception.TTSException
 import java.io.BufferedInputStream
+import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.security.MessageDigest
 import java.util.*
 
 data class SpeechData(val stream: InputStream, val size: Long)
 
-class TTS(context: Context, initListener: TextToSpeech.OnInitListener) {
+class TTS(private val context: Context, initListener: TextToSpeech.OnInitListener) {
    private val tts = TextToSpeech(context, initListener)
+   private val messageDigest = MessageDigest.getInstance("SHA-256")
+
+   fun createTTSFile(text: String, language: Locale): File {
+      val digest = hash(text, language)
+      val filename = "tts_$digest.wav"
+      val file = File(context.cacheDir, filename)
+
+      val uuid = UUID.randomUUID().toString()
+      val lock = Lock()
+      tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
+
+      synchronized(lock) {
+         tts.language = language
+         tts.synthesizeToFile(text, null, file, uuid)
+         lock.wait()
+      }
+
+      if(!lock.success) {
+         throw TTSException()
+      }
+
+      return file
+   }
+
+   private fun hash(text: String, language: Locale): String {
+      val bytes = "$text$language".toByteArray()
+      val digest = messageDigest.digest(bytes)
+      return digest.fold("", { str, it -> str + "%02x".format(it) })
+   }
 
    fun fetchTTSStream(text: String, language: Locale): SpeechData {
       val file = createTempFile("tmp_tts_server", ".wav")
