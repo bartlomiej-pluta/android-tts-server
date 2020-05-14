@@ -12,7 +12,7 @@ import io.bartek.ttsserver.network.NetworkUtil
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
-import io.bartek.ttsserver.sonos.SonosController
+import io.bartek.ttsserver.sonos.SonosQueue
 import io.bartek.ttsserver.tts.TTS
 import java.io.BufferedInputStream
 import java.io.File
@@ -24,7 +24,7 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
    private val tts = TTS(context, this)
    private val endpoints = Endpoints()
-   private val sonos = SonosController(NetworkUtil.getIpAddress(context), port)
+   private val sonos = SonosQueue(tts, NetworkUtil.getIpAddress(context), port)
 
    override fun serve(session: IHTTPSession?): Response {
       try {
@@ -100,11 +100,11 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
          throw ResponseException(BAD_REQUEST, "")
       }
 
-      val (text, language, zone, volume) = extractBody(session) { SonosTTSRequestData.fromJSON(it) }
+      val data = extractBody(session) { SonosTTSRequestData.fromJSON(it) }
 
-      val file = tts.createTTSFile(text, language)
-      sonos.clip(file, zone, volume)
-      return newFixedLengthResponse("")
+      sonos.push(data)
+
+      return newFixedLengthResponse(ACCEPTED, MIME_PLAINTEXT, "")
    }
 
    private fun sonosCache(session: IHTTPSession): Response {
