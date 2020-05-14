@@ -8,17 +8,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
+import io.bartek.ttsserver.network.NetworkUtil
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
+import io.bartek.ttsserver.sonos.SonosController
 import io.bartek.ttsserver.tts.TTS
-import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
-
-private data class TTSRequestData(val text: String, val language: Locale)
 
 
 class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
@@ -26,6 +24,7 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
    private val tts = TTS(context, this)
    private val endpoints = Endpoints()
+   private val sonos = SonosController(NetworkUtil.getIpAddress(context), port)
 
    override fun serve(session: IHTTPSession?): Response {
       try {
@@ -47,9 +46,10 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
       }
    }
 
-   private fun sonos(session: IHTTPSession): Response {
-//      SonosDiscovery.discover().firstOrNull { it.zoneGroupState.name == "Salon" }
-//         ?.play()
+   private fun say(session: IHTTPSession): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_SAY_ENDPOINT, true)) {
+         throw ResponseException(NOT_FOUND, "")
+      }
 
       if (session.method != Method.POST) {
          throw ResponseException(METHOD_NOT_ALLOWED, "")
@@ -59,9 +59,52 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
          throw ResponseException(BAD_REQUEST, "")
       }
 
-      val (text, language) = getRequestData(session)
+      val (text, language) = extractBody(session) { TTSRequestData.fromJSON(it) }
+
+      tts.performTTS(text, language)
+      return newFixedLengthResponse(OK, MIME_PLAINTEXT, "")
+   }
+
+   private fun <T> extractBody(session: IHTTPSession, provider: (String) -> T): T {
+      return mutableMapOf<String, String>().let {
+         session.parseBody(it)
+         provider(it["postData"] ?: "{}")
+      }
+   }
+
+   private fun wave(session: IHTTPSession): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_WAVE_ENDPOINT, true)) {
+         throw ResponseException(NOT_FOUND, "")
+      }
+
+      if (session.method != Method.POST) {
+         throw ResponseException(METHOD_NOT_ALLOWED, "")
+      }
+
+      if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
+         throw ResponseException(BAD_REQUEST, "")
+      }
+
+      val (text, language) = extractBody(session) { TTSRequestData.fromJSON(it) }
+
+      val (stream, size) = tts.fetchTTSStream(text, language)
+      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
+   }
+
+   private fun sonos(session: IHTTPSession): Response {
+      if (session.method != Method.POST) {
+         throw ResponseException(METHOD_NOT_ALLOWED, "")
+      }
+
+      if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
+         throw ResponseException(BAD_REQUEST, "")
+      }
+
+      val (text, language, zone, volume) = extractBody(session) { SonosTTSRequestData.fromJSON(it) }
+
       val file = tts.createTTSFile(text, language)
-      return newFixedLengthResponse(file.toString())
+      sonos.clip(file, zone, volume)
+      return newFixedLengthResponse("")
    }
 
    private fun sonosCache(session: IHTTPSession): Response {
@@ -79,54 +122,6 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
       val stream = BufferedInputStream(FileInputStream(file))
       val size = file.length()
       return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
-   }
-
-   private fun wave(session: IHTTPSession): Response {
-      if (!preferences.getBoolean(PreferenceKey.ENABLE_WAVE_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
-      }
-
-      if (session.method != Method.POST) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
-      }
-
-      if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw ResponseException(BAD_REQUEST, "")
-      }
-
-      val (text, language) = getRequestData(session)
-      val (stream, size) = tts.fetchTTSStream(text, language)
-      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
-   }
-
-   private fun say(session: IHTTPSession): Response {
-      if (!preferences.getBoolean(PreferenceKey.ENABLE_SAY_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
-      }
-
-      if (session.method != Method.POST) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
-      }
-
-      if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw ResponseException(BAD_REQUEST, "")
-      }
-
-      val (text, language) = getRequestData(session)
-      tts.performTTS(text, language)
-      return newFixedLengthResponse(OK, MIME_PLAINTEXT, "")
-   }
-
-   private fun getRequestData(session: IHTTPSession): TTSRequestData {
-      val map = mutableMapOf<String, String>()
-      session.parseBody(map)
-      val json = JSONObject(map["postData"] ?: "{}")
-      val language = json.optString("language")
-         .takeIf { it.isNotBlank() }
-         ?.let { Locale(it) }
-         ?: Locale.US
-      val text = json.optString("text") ?: throw ResponseException(BAD_REQUEST, "")
-      return TTSRequestData(text, language)
    }
 
    override fun onInit(status: Int) = start()
