@@ -24,6 +24,13 @@
             android:title="@string/preference_enable_wave_endpoint_title"
             app:iconSpaceReserved="false" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="preference_enable_sonos_endpoint"
+            android:summary="@string/preference_enable_sonos_endpoint_summary"
+            android:title="@string/preference_enable_sonos_endpoint_title"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preference_category_tts" app:iconSpaceReserved="false">

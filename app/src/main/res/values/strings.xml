@@ -21,6 +21,8 @@
     <string name="preference_enable_say_endpoint_title">Enable /say endpoint</string>
     <string name="preference_enable_wave_endpoint_summary">Allow HTTP clients to use /wave endpoint which enables them to retrieve TTS message as wave file</string>
     <string name="preference_enable_wave_endpoint_title">Enable /wave endpoint</string>
+    <string name="preference_enable_sonos_endpoint_summary">Allow HTTP clients to use /sonos endpoint which enables them to send TTS messages directly to Sonos devices</string>
+    <string name="preference_enable_sonos_endpoint_title">Enable /sonos endpoint</string>
     <string name="preference_tts_summary">Go to platform\'s TTS engine settings and adjust its parameters</string>
     <string name="preference_tts_title">TTS engine settings</string>
     <string name="preference_category_tts">TTS engine</string>

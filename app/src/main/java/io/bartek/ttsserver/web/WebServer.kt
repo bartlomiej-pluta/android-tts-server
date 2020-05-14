@@ -92,6 +92,10 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
    }
 
    private fun sonos(session: IHTTPSession): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
+         throw ResponseException(NOT_FOUND, "")
+      }
+
       if (session.method != Method.POST) {
          throw ResponseException(METHOD_NOT_ALLOWED, "")
       }
@@ -108,6 +112,10 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
    }
 
    private fun sonosCache(session: IHTTPSession): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
+         throw ResponseException(NOT_FOUND, "")
+      }
+
       if (session.method != Method.GET) {
          throw ResponseException(METHOD_NOT_ALLOWED, "")
       }
