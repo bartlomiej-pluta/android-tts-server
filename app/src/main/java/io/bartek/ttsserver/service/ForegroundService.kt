@@ -1,29 +1,35 @@
 package io.bartek.ttsserver.service
 
 import android.annotation.SuppressLint
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.PowerManager
-import androidx.preference.PreferenceManager
+import dagger.android.DaggerService
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.web.WebServer
+import io.bartek.ttsserver.web.WebServerFactory
+import javax.inject.Inject
 
 
-class ForegroundService : Service() {
-   private lateinit var preferences: SharedPreferences
+class ForegroundService : DaggerService() {
    private var wakeLock: PowerManager.WakeLock? = null
    private var isServiceStarted = false
    private var webServer: WebServer? = null
    private val port: Int
       get() = preferences.getInt(PreferenceKey.PORT, 8080)
-   private val notificationFactory = ForegroundNotificationFactory(this)
 
+   @Inject
+   lateinit var preferences: SharedPreferences
+
+   @Inject
+   lateinit var webServerFactory: WebServerFactory
+
+   @Inject
+   lateinit var notificationFactory: ForegroundNotificationFactory
 
    override fun onCreate() {
       super.onCreate()
-      preferences = PreferenceManager.getDefaultSharedPreferences(this)
       startForeground(1, notificationFactory.createForegroundNotification(port))
    }
 
@@ -41,6 +47,7 @@ class ForegroundService : Service() {
    }
 
    override fun onDestroy() {
+      webServer?.stop()
       webServer = null
    }
 
@@ -54,8 +61,11 @@ class ForegroundService : Service() {
                acquire()
             }
          }
-      webServer = WebServer(port, this)
-      state = ServiceState.RUNNING
+      webServer = webServerFactory.createWebServer()
+      webServer?.let {
+         state = ServiceState.RUNNING
+         it.start()
+      }
    }
 
    private fun stopService() {

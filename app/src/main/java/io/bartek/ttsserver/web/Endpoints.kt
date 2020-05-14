@@ -15,7 +15,7 @@ enum class Endpoint(val uri: String, val id: Int) {
    }
 }
 
-class Endpoints {
+object Endpoints {
    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
    init {

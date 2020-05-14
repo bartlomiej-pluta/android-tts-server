@@ -16,6 +16,7 @@
     <uses-permission android:name="io.bartek.permission.TTS_HTTP_SERVICE" />
 
     <application
+        android:name=".ttsserver.TTSApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

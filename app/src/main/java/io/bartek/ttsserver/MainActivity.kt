@@ -13,16 +13,21 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import dagger.android.support.DaggerAppCompatActivity
 import io.bartek.R
 import io.bartek.ttsserver.help.HelpActivity
 import io.bartek.ttsserver.preference.PreferencesActivity
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
+import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
    private lateinit var serverControlButton: AppCompatImageButton
    private lateinit var promptText: TextView
+
+   @Inject
+   lateinit var context: Context
 
    private val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {

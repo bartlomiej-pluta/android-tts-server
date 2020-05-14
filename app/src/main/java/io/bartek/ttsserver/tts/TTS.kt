@@ -13,9 +13,15 @@ import java.util.*
 
 data class SpeechData(val stream: InputStream, val size: Long)
 
-class TTS(private val context: Context, initListener: TextToSpeech.OnInitListener) {
-   private val tts = TextToSpeech(context, initListener)
+class TTS(
+   private val context: Context,
+   private val tts: TextToSpeech,
+   private val ttsStausHolder: TTSStatusHolder
+) {
    private val messageDigest = MessageDigest.getInstance("SHA-256")
+
+   val status: TTSStatus
+      get() = ttsStausHolder.status
 
    fun createTTSFile(text: String, language: Locale): File {
       val digest = hash(text, language)
@@ -34,7 +40,7 @@ class TTS(private val context: Context, initListener: TextToSpeech.OnInitListene
          lock.wait()
       }
 
-      if(!lock.success) {
+      if (!lock.success) {
          throw TTSException()
       }
 

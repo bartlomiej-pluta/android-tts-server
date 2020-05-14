@@ -2,47 +2,56 @@ package io.bartek.ttsserver.web
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
-import android.speech.tts.TextToSpeech
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.preference.PreferenceManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
-import io.bartek.ttsserver.network.NetworkUtil
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.sonos.SonosQueue
 import io.bartek.ttsserver.tts.TTS
+import io.bartek.ttsserver.tts.TTSStatus
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 
 
-class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
-   TextToSpeech.OnInitListener {
-   private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-   private val tts = TTS(context, this)
-   private val endpoints = Endpoints()
-   private val sonos = SonosQueue(tts, NetworkUtil.getIpAddress(context), port)
-
+class WebServer(
+   port: Int,
+   private val context: Context,
+   private val preferences: SharedPreferences,
+   private val tts: TTS,
+   private val sonos: SonosQueue
+) : NanoHTTPD(port) {
    override fun serve(session: IHTTPSession?): Response {
       try {
+         assertThatTTSIsReady()
+
          session?.let {
-            return when (endpoints.match(it.uri)) {
-               Endpoint.SAY -> say(it)
-               Endpoint.WAVE -> wave(it)
-               Endpoint.SONOS -> sonos(it)
-               Endpoint.SONOS_CACHE -> sonosCache(it)
-               Endpoint.UNKNOWN -> throw ResponseException(NOT_FOUND, "")
-            }
+            return dispatch(it)
          }
 
          throw ResponseException(BAD_REQUEST, "")
-      } catch (e: ResponseException) {
-         throw e
-      } catch (e: Exception) {
-         throw ResponseException(INTERNAL_ERROR, e.toString(), e)
+      }
+      catch (e: ResponseException) { throw e }
+      catch (e: Exception) { throw ResponseException(INTERNAL_ERROR, e.toString(), e) }
+   }
+
+   private fun dispatch(it: IHTTPSession): Response {
+      return when (Endpoints.match(it.uri)) {
+         Endpoint.SAY -> say(it)
+         Endpoint.WAVE -> wave(it)
+         Endpoint.SONOS -> sonos(it)
+         Endpoint.SONOS_CACHE -> sonosCache(it)
+         Endpoint.UNKNOWN -> throw ResponseException(NOT_FOUND, "")
+      }
+   }
+
+   private fun assertThatTTSIsReady() {
+      if (tts.status != TTSStatus.READY) {
+         throw ResponseException(NOT_ACCEPTABLE, "Server is not ready yet")
       }
    }
 
@@ -120,10 +129,11 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
          throw ResponseException(METHOD_NOT_ALLOWED, "")
       }
 
-      val filename = Uri.parse(session.uri).lastPathSegment ?: throw ResponseException(BAD_REQUEST, "")
+      val filename =
+         Uri.parse(session.uri).lastPathSegment ?: throw ResponseException(BAD_REQUEST, "")
       val file = File(context.cacheDir, filename)
 
-      if(!file.exists()) {
+      if (!file.exists()) {
          throw ResponseException(NOT_FOUND, "")
       }
 
@@ -132,10 +142,9 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
       return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
    }
 
-   override fun onInit(status: Int) = start()
-
    override fun start() {
       super.start()
+      sonos.run()
       LocalBroadcastManager
          .getInstance(context)
          .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {
@@ -145,6 +154,7 @@ class WebServer(port: Int, private val context: Context) : NanoHTTPD(port),
 
    override fun stop() {
       super.stop()
+      sonos.stop()
       LocalBroadcastManager
          .getInstance(context)
          .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {

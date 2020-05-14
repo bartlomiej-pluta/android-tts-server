@@ -6,8 +6,8 @@ import android.net.wifi.WifiManager
 import java.net.InetAddress
 
 
-object NetworkUtil {
-   fun getIpAddress(context: Context): String {
+class NetworkUtil(private val context: Context) {
+   fun getIpAddress(): String {
       return (context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager).let {
          inetAddress(it.dhcpInfo.ipAddress).toString().substring(1)
       }

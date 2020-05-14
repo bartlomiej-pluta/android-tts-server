@@ -1,6 +1,9 @@
 package io.bartek.ttsserver.sonos
 
+import android.content.SharedPreferences
 import com.vmichalak.sonoscontroller.SonosDiscovery
+import io.bartek.ttsserver.network.NetworkUtil
+import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.tts.TTS
@@ -24,7 +27,7 @@ private class Consumer(
    }
 
 
-   private fun consume(data: SonosTTSRequestData) {
+   private fun consume(data: SonosTTSRequestData) =
       SonosDiscovery.discover().firstOrNull { it.zoneGroupState.name == data.zone }?.let {
          val file = tts.createTTSFile(data.text, data.language)
          val filename = file.name
@@ -34,16 +37,30 @@ private class Consumer(
          it.clip(url, "")
          it.volume = currentVolume
       }
-   }
 }
 
-class SonosQueue(tts: TTS, host: String, port: Int) {
+class SonosQueue(
+   private val tts: TTS,
+   private val networkUtil: NetworkUtil,
+   private val preferences: SharedPreferences
+) {
    private val queue: BlockingQueue<SonosTTSRequestData> = LinkedBlockingQueue()
-   private val consumer = Thread(Consumer(tts, host, port, queue)).also {
-      it.name = "SONOS_QUEUE"
+   private val host: String
+      get() = networkUtil.getIpAddress()
+   private val port: Int
+      get() = preferences.getInt(PreferenceKey.PORT, 8080)
+   private var consumer: Thread? = null
+
+   fun run() {
+      consumer?.interrupt()
+      consumer = Thread(Consumer(tts, host, port, queue)).also { it.name = "SonosQueue" }
+      consumer?.start()
    }
 
-   init { consumer.start() }
+   fun stop() {
+      consumer?.interrupt()
+      consumer = null
+   }
 
    fun push(data: SonosTTSRequestData) = queue.add(data)
 }
