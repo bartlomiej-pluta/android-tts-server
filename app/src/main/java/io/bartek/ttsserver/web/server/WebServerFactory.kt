@@ -1,4 +1,4 @@
-package io.bartek.ttsserver.web
+package io.bartek.ttsserver.web.server
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,5 +13,10 @@ class WebServerFactory(
    private val sonos: SonosQueue
 ) {
    fun createWebServer() =
-      WebServer(preferences.getInt(PreferenceKey.PORT, 8080), context, preferences, tts, sonos)
+      WebServer(
+         preferences.getInt(
+            PreferenceKey.PORT,
+            8080
+         ), context, preferences, tts, sonos
+      )
 }

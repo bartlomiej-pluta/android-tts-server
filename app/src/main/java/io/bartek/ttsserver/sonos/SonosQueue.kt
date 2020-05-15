@@ -7,7 +7,7 @@ import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.tts.TTS
-import io.bartek.ttsserver.web.SonosTTSRequestData
+import io.bartek.ttsserver.web.dto.BaseDTO
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -15,7 +15,7 @@ private class Consumer(
    private val tts: TTS,
    private val host: String,
    private val port: Int,
-   private val queue: BlockingQueue<SonosTTSRequestData>
+   private val queue: BlockingQueue<BaseDTO>
 ) : Runnable {
 
    override fun run() = try {
@@ -27,7 +27,7 @@ private class Consumer(
    }
 
 
-   private fun consume(data: SonosTTSRequestData) =
+   private fun consume(data: BaseDTO) =
       SonosDiscovery.discover().firstOrNull { it.zoneGroupState.name == data.zone }?.let {
          val file = tts.createTTSFile(data.text, data.language)
          val filename = file.name
@@ -44,7 +44,7 @@ class SonosQueue(
    private val networkUtil: NetworkUtil,
    private val preferences: SharedPreferences
 ) {
-   private val queue: BlockingQueue<SonosTTSRequestData> = LinkedBlockingQueue()
+   private val queue: BlockingQueue<BaseDTO> = LinkedBlockingQueue()
    private val host: String
       get() = networkUtil.getIpAddress()
    private val port: Int
@@ -62,5 +62,5 @@ class SonosQueue(
       consumer = null
    }
 
-   fun push(data: SonosTTSRequestData) = queue.add(data)
+   fun push(data: BaseDTO) = queue.add(data)
 }

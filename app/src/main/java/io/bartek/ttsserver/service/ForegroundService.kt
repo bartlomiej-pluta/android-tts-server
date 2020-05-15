@@ -7,8 +7,8 @@ import android.content.SharedPreferences
 import android.os.PowerManager
 import dagger.android.DaggerService
 import io.bartek.ttsserver.preference.PreferenceKey
-import io.bartek.ttsserver.web.WebServer
-import io.bartek.ttsserver.web.WebServerFactory
+import io.bartek.ttsserver.web.server.WebServer
+import io.bartek.ttsserver.web.server.WebServerFactory
 import javax.inject.Inject
 
 

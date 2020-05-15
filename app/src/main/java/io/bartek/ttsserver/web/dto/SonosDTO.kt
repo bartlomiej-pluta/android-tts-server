@@ -1,13 +1,13 @@
-package io.bartek.ttsserver.web
+package io.bartek.ttsserver.web.dto
 
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.ResponseException
 import org.json.JSONObject
 import java.util.*
 
-data class SonosTTSRequestData(val text: String, val language: Locale, val zone: String, val volume: Int) {
+data class SonosDTO(val text: String, val language: Locale) {
    companion object {
-      fun fromJSON(json: String): SonosTTSRequestData {
+      fun fromJSON(json: String): SonosDTO {
          val root = JSONObject(json)
 
          val language = root.optString("language")
@@ -18,13 +18,8 @@ data class SonosTTSRequestData(val text: String, val language: Locale, val zone:
             NanoHTTPD.Response.Status.BAD_REQUEST,
             ""
          )
-         val zone = root.optString("zone") ?: throw ResponseException(
-            NanoHTTPD.Response.Status.BAD_REQUEST,
-            ""
-         )
-         val volume = root.optInt("volume", 50)
 
-         return SonosTTSRequestData(text, language, zone, volume)
+         return SonosDTO(text, language)
       }
    }
 }

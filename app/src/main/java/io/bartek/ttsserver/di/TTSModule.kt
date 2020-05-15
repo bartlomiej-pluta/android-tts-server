@@ -11,7 +11,7 @@ import io.bartek.ttsserver.service.ForegroundNotificationFactory
 import io.bartek.ttsserver.sonos.SonosQueue
 import io.bartek.ttsserver.tts.TTS
 import io.bartek.ttsserver.tts.TTSStatusHolder
-import io.bartek.ttsserver.web.WebServerFactory
+import io.bartek.ttsserver.web.server.WebServerFactory
 import javax.inject.Singleton
 
 @Module
@@ -39,7 +39,12 @@ class TTSModule {
       tts: TTS,
       sonos: SonosQueue
    ) =
-      WebServerFactory(preferences, context, tts, sonos)
+      WebServerFactory(
+         preferences,
+         context,
+         tts,
+         sonos
+      )
 
    @Provides
    @Singleton
