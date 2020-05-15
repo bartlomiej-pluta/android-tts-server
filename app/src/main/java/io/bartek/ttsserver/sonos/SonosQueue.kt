@@ -1,6 +1,8 @@
 package io.bartek.ttsserver.sonos
 
 import com.vmichalak.sonoscontroller.SonosDiscovery
+import io.bartek.ttsserver.service.ForegroundService
+import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.tts.TTS
 import io.bartek.ttsserver.web.SonosTTSRequestData
 import java.util.concurrent.BlockingQueue
@@ -12,8 +14,9 @@ private class Consumer(
    private val port: Int,
    private val queue: BlockingQueue<SonosTTSRequestData>
 ) : Runnable {
+
    override fun run() = try {
-      while (true) {
+      while (ForegroundService.state == ServiceState.RUNNING) {
          consume(queue.take())
       }
    } catch (e: InterruptedException) {
@@ -36,7 +39,9 @@ private class Consumer(
 
 class SonosQueue(tts: TTS, host: String, port: Int) {
    private val queue: BlockingQueue<SonosTTSRequestData> = LinkedBlockingQueue()
-   private val consumer = Thread(Consumer(tts, host, port, queue))
+   private val consumer = Thread(Consumer(tts, host, port, queue)).also {
+      it.name = "SONOS_QUEUE"
+   }
 
    init { consumer.start() }
 
