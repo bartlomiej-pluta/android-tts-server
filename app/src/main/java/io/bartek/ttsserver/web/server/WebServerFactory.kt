@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.sonos.SonosQueue
-import io.bartek.ttsserver.tts.TTS
+import io.bartek.ttsserver.tts.engine.TTSEngine
 
 class WebServerFactory(
    private val preferences: SharedPreferences,
    private val context: Context,
-   private val tts: TTS,
+   private val tts: TTSEngine,
    private val sonos: SonosQueue
 ) {
    fun createWebServer() =

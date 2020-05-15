@@ -8,8 +8,8 @@ import dagger.Module
 import dagger.Provides
 import io.bartek.ttsserver.service.ForegroundNotificationFactory
 import io.bartek.ttsserver.sonos.SonosQueue
-import io.bartek.ttsserver.tts.TTS
-import io.bartek.ttsserver.tts.TTSStatusHolder
+import io.bartek.ttsserver.tts.engine.TTSEngine
+import io.bartek.ttsserver.tts.status.TTSStatusHolder
 import io.bartek.ttsserver.util.NetworkUtil
 import io.bartek.ttsserver.web.server.WebServerFactory
 import javax.inject.Singleton
@@ -29,14 +29,14 @@ class TTSModule {
    @Provides
    @Singleton
    fun tts(context: Context, textToSpeech: TextToSpeech, ttsStatusHolder: TTSStatusHolder) =
-      TTS(context, textToSpeech, ttsStatusHolder)
+      TTSEngine(context, textToSpeech, ttsStatusHolder)
 
    @Provides
    @Singleton
    fun webServerFactory(
       preferences: SharedPreferences,
       context: Context,
-      tts: TTS,
+      tts: TTSEngine,
       sonos: SonosQueue
    ) =
       WebServerFactory(
@@ -56,7 +56,7 @@ class TTSModule {
 
    @Provides
    @Singleton
-   fun sonosQueue(tts: TTS, networkUtil: NetworkUtil, preferences: SharedPreferences) =
+   fun sonosQueue(tts: TTSEngine, networkUtil: NetworkUtil, preferences: SharedPreferences) =
       SonosQueue(tts, networkUtil, preferences)
 
    @Provides

@@ -11,8 +11,8 @@ import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.sonos.SonosQueue
-import io.bartek.ttsserver.tts.TTS
-import io.bartek.ttsserver.tts.TTSStatus
+import io.bartek.ttsserver.tts.engine.TTSEngine
+import io.bartek.ttsserver.tts.status.TTSStatus
 import io.bartek.ttsserver.web.dto.BaseDTO
 import io.bartek.ttsserver.web.dto.SonosDTO
 import io.bartek.ttsserver.web.endpoint.Endpoint
@@ -26,7 +26,7 @@ class WebServer(
    port: Int,
    private val context: Context,
    private val preferences: SharedPreferences,
-   private val tts: TTS,
+   private val tts: TTSEngine,
    private val sonos: SonosQueue
 ) : NanoHTTPD(port) {
    override fun serve(session: IHTTPSession?): Response {

@@ -5,14 +5,14 @@ import com.vmichalak.sonoscontroller.SonosDiscovery
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
-import io.bartek.ttsserver.tts.TTS
+import io.bartek.ttsserver.tts.engine.TTSEngine
 import io.bartek.ttsserver.util.NetworkUtil
 import io.bartek.ttsserver.web.dto.BaseDTO
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 private class Consumer(
-   private val tts: TTS,
+   private val tts: TTSEngine,
    private val host: String,
    private val port: Int,
    private val queue: BlockingQueue<BaseDTO>
@@ -40,7 +40,7 @@ private class Consumer(
 }
 
 class SonosQueue(
-   private val tts: TTS,
+   private val tts: TTSEngine,
    private val networkUtil: NetworkUtil,
    private val preferences: SharedPreferences
 ) {

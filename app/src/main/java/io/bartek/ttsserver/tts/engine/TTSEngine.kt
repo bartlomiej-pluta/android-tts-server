@@ -1,27 +1,28 @@
-package io.bartek.ttsserver.tts
+package io.bartek.ttsserver.tts.engine
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
-import io.bartek.ttsserver.exception.TTSException
+import io.bartek.ttsserver.tts.exception.TTSException
+import io.bartek.ttsserver.tts.listener.Lock
+import io.bartek.ttsserver.tts.listener.TTSProcessListener
+import io.bartek.ttsserver.tts.model.TTSStream
+import io.bartek.ttsserver.tts.status.TTSStatus
+import io.bartek.ttsserver.tts.status.TTSStatusHolder
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import java.security.MessageDigest
 import java.util.*
 
-data class SpeechData(val stream: InputStream, val size: Long)
-
-class TTS(
+class TTSEngine(
    private val context: Context,
    private val tts: TextToSpeech,
-   private val ttsStausHolder: TTSStatusHolder
+   private val ttsStatusHolder: TTSStatusHolder
 ) {
    private val messageDigest = MessageDigest.getInstance("SHA-256")
 
    val status: TTSStatus
-      get() = ttsStausHolder.status
+      get() = ttsStatusHolder.status
 
    fun createTTSFile(text: String, language: Locale): File {
       val digest = hash(text, language)
@@ -32,7 +33,12 @@ class TTS(
 
       val uuid = UUID.randomUUID().toString()
       val lock = Lock()
-      tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
+      tts.setOnUtteranceProgressListener(
+         TTSProcessListener(
+            uuid,
+            lock
+         )
+      )
 
       synchronized(lock) {
          tts.language = language
@@ -53,12 +59,17 @@ class TTS(
       return digest.fold("", { str, it -> str + "%02x".format(it) })
    }
 
-   fun fetchTTSStream(text: String, language: Locale): SpeechData {
+   fun fetchTTSStream(text: String, language: Locale): TTSStream {
       val file = createTempFile("tmp_tts_server", ".wav")
 
       val uuid = UUID.randomUUID().toString()
       val lock = Lock()
-      tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
+      tts.setOnUtteranceProgressListener(
+         TTSProcessListener(
+            uuid,
+            lock
+         )
+      )
 
       synchronized(lock) {
          tts.language = language
@@ -75,13 +86,18 @@ class TTS(
 
       file.delete()
 
-      return SpeechData(stream, length)
+      return TTSStream(stream, length)
    }
 
    fun performTTS(text: String, language: Locale) {
       val uuid = UUID.randomUUID().toString()
       val lock = Lock()
-      tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
+      tts.setOnUtteranceProgressListener(
+         TTSProcessListener(
+            uuid,
+            lock
+         )
+      )
 
       synchronized(lock) {
          tts.language = language
@@ -95,32 +111,3 @@ class TTS(
    }
 }
 
-@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-// TODO: Investigate the Kotlin way to achieve the same
-private data class Lock(var success: Boolean = false) : Object()
-
-private class TTSProcessListener(
-   private val uuid: String,
-   private val lock: Lock
-) : UtteranceProgressListener() {
-
-   override fun onDone(utteranceId: String?) {
-      if (utteranceId == uuid) {
-         synchronized(lock) {
-            lock.success = true
-            lock.notifyAll()
-         }
-      }
-   }
-
-   override fun onError(utteranceId: String?) {
-      if (utteranceId == uuid) {
-         synchronized(lock) {
-            lock.success = false
-            lock.notifyAll()
-         }
-      }
-   }
-
-   override fun onStart(utteranceId: String?) {}
-}

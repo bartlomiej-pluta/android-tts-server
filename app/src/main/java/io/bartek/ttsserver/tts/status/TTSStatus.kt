@@ -1,4 +1,4 @@
-package io.bartek.ttsserver.tts
+package io.bartek.ttsserver.tts.status
 
 import android.speech.tts.TextToSpeech
 
@@ -9,14 +9,5 @@ enum class TTSStatus(private val status: Int) {
 
    companion object {
       fun of(status: Int) = values().firstOrNull { it.status == status } ?: UNLOADED
-   }
-}
-
-class TTSStatusHolder : TextToSpeech.OnInitListener {
-   var status = TTSStatus.UNLOADED
-      private set
-
-   override fun onInit(status: Int) {
-      this.status = TTSStatus.of(status)
    }
 }
