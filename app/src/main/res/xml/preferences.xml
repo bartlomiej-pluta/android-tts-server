@@ -41,5 +41,13 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/preference_category_sonos" app:iconSpaceReserved="false">
+        <Preference
+            android:key="preference_invalidate_sonos_cache"
+            android:summary="@string/preference_invalidate_sonos_cache_summary"
+            app:title="@string/preference_invalidate_sonos_cache_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
 
 </androidx.preference.PreferenceScreen>

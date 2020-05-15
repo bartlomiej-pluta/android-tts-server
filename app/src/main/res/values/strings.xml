@@ -25,8 +25,13 @@
     <string name="preference_enable_sonos_endpoint_title">Enable /sonos endpoint</string>
     <string name="preference_tts_summary">Go to platform\'s TTS engine settings and adjust its parameters</string>
     <string name="preference_tts_title">TTS engine settings</string>
+    <string name="preference_invalidate_sonos_cache_summary">Clear application cache directory from already generated Sonos TTS data for given sentences. You typically want to do it when you change the TTS engine\'s voice settings.</string>
+    <string name="preference_invalidate_sonos_cache_title">Invalidate Sonos cache</string>
     <string name="preference_category_tts">TTS engine</string>
     <string name="preference_category_server">Server</string>
+    <string name="preference_category_sonos">Sonos</string>
+    <string name="preference_invalidate_sonos_cache_toast">Sonos cache has been invalidated</string>
+
     <string name="menu_settings">Settings</string>
     <string name="menu_help">Help</string>
 </resources>

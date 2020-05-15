@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.text.InputType
+import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -19,6 +20,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var sayEndpointPreference: SwitchPreference
    private lateinit var waveEndpointPreference: SwitchPreference
    private lateinit var ttsEnginePreference: Preference
+   private lateinit var clearSonosCachePreference: Preference
 
    private val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
@@ -35,14 +37,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    override fun onResume() {
       super.onResume()
       LocalBroadcastManager
-         .getInstance(context!!)
+         .getInstance(requireContext())
          .registerReceiver(receiver, IntentFilter(ForegroundService.CHANGE_STATE))
       updateViewAccordingToServiceState(ForegroundService.state)
    }
 
    override fun onPause() {
       LocalBroadcastManager
-         .getInstance(context!!)
+         .getInstance(requireContext())
          .unregisterReceiver(receiver)
       super.onPause()
    }
@@ -56,6 +58,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
       ttsEnginePreference = findPreference(PreferenceKey.TTS)!!
       ttsEnginePreference.setOnPreferenceClickListener {
          startActivity(Intent(ANDROID_TTS_SETTINGS))
+         true
+      }
+      clearSonosCachePreference = findPreference(PreferenceKey.INVALIDATE_SONOS_CACHE)!!
+      clearSonosCachePreference.setOnPreferenceClickListener {
+         context?.cacheDir?.listFiles() ?. forEach { it.delete() }
+         Toast.makeText(context, getString(R.string.preference_invalidate_sonos_cache_toast), Toast.LENGTH_SHORT).show()
          true
       }
       updateViewAccordingToServiceState(ForegroundService.state)
