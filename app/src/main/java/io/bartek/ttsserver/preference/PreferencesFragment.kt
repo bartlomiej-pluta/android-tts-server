@@ -19,6 +19,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var portPreference: IntEditTextPreference
    private lateinit var sayEndpointPreference: SwitchPreference
    private lateinit var waveEndpointPreference: SwitchPreference
+   private lateinit var sonosEndpointPreference: SwitchPreference
    private lateinit var ttsEnginePreference: Preference
    private lateinit var clearSonosCachePreference: Preference
 
@@ -32,6 +33,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
    private fun updateViewAccordingToServiceState(state: ServiceState) {
       portPreference.isEnabled = state == ServiceState.STOPPED
+      sonosEndpointPreference.isEnabled = state == ServiceState.STOPPED
    }
 
    override fun onResume() {
@@ -55,6 +57,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
       portPreference.setOnBindEditTextListener { it.inputType = InputType.TYPE_CLASS_NUMBER }
       sayEndpointPreference = findPreference(PreferenceKey.ENABLE_SAY_ENDPOINT)!!
       waveEndpointPreference = findPreference(PreferenceKey.ENABLE_WAVE_ENDPOINT)!!
+      sonosEndpointPreference = findPreference(PreferenceKey.ENABLE_SONOS_ENDPOINT)!!
       ttsEnginePreference = findPreference(PreferenceKey.TTS)!!
       ttsEnginePreference.setOnPreferenceClickListener {
          startActivity(Intent(ANDROID_TTS_SETTINGS))
