@@ -2,11 +2,11 @@ package io.bartek.ttsserver.sonos
 
 import android.content.SharedPreferences
 import com.vmichalak.sonoscontroller.SonosDiscovery
-import io.bartek.ttsserver.network.NetworkUtil
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
 import io.bartek.ttsserver.tts.TTS
+import io.bartek.ttsserver.util.NetworkUtil
 import io.bartek.ttsserver.web.dto.BaseDTO
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue

@@ -1,4 +1,4 @@
-package io.bartek.ttsserver.network
+package io.bartek.ttsserver.util
 
 import android.content.Context
 import android.content.Context.WIFI_SERVICE

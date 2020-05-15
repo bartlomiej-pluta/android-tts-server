@@ -6,11 +6,11 @@ import android.speech.tts.TextToSpeech
 import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
-import io.bartek.ttsserver.network.NetworkUtil
 import io.bartek.ttsserver.service.ForegroundNotificationFactory
 import io.bartek.ttsserver.sonos.SonosQueue
 import io.bartek.ttsserver.tts.TTS
 import io.bartek.ttsserver.tts.TTSStatusHolder
+import io.bartek.ttsserver.util.NetworkUtil
 import io.bartek.ttsserver.web.server.WebServerFactory
 import javax.inject.Singleton
 
