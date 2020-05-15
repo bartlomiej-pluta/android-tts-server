@@ -36,9 +36,10 @@
 
 <h1>Consuming REST interface</h1>
 <p>
-    So far, the application provides two endpoints: <code>/say</code> and <code>/wave</code>.
-    Each endpoint works with JSON-based body, so each request requires a proper 
-    <code>Content-Type</code> header.
+    So far, the application provides three endpoints: <code>/say</code>, <code>/wave</code>,
+    <code>/sonos</code> and <code>/sonos/{fileName}</code>.
+    Each data-accepting endpoint works with JSON-based body, so each request carrying the data
+    requires a proper <code>Content-Type</code> header.
 </p>
 
 <h2>The <code>/say</code> endpoint</h2>
@@ -71,12 +72,44 @@ POST /wave
     provided text. The goal of this endpoint is to provide interface allowing you establishment
     of the connection between the TTS Server and some other kind of already running TTS system,
     which can invoke the HTTP request to your Android device and do something with returned
-    wav file. For example, take a look at
-    <a href="https://github.com/bartlomiej-pluta/node-sonos-http-api">my fork</a> of great
-    <a href="https://github.com/jishi/node-sonos-http-api">Node Sonos HTTP API</a>.
-    I've already written a TTS plugin in my fork allowing me to connect the TTS Server and my
-    Sonos speakers right through the Node Sonos HTTP API, which performs the request
-    to the Android device and puts returned wav file on the Sonos speakers.
+    wav file.
+</p>
+
+<h2>The <code>/sonos</code> endpoint</h2>
+<pre>
+POST /sonos
+{
+    "text": "The text to be spoken",
+    "language": "en_US",
+    "zone": "Living room",
+    "volume": 60
+}
+</pre>
+<p><b>Returns:</b> <code>202 Accepted</code> meaning that the request has been queued and waits
+to be completed.</p>
+<p>
+    The <code>/sonos</code> endpoint enables you to use your Sonos devices as a TTS speakers.
+    You need just to provide a text to be spoken and a desired zone name, where message is
+    supposed to be spoken. In the contrast to other endpoints, the <code>/sonos</code> endpoint
+    is non-blocking, which means your request is <b>accepted</b> and pushed at the end of
+    queue, where you are immediately given with response. The message waits in the queue to be
+    spoken protecting the Sonos device from messages race condition problem.
+</p>
+
+<h2>The <code>/sonos/{fileName}</code> endpoint</h2>
+<pre>
+GET /sonos/{fileName}
+</pre>
+<p><b>Returns: </b> <code>200 OK</code> with wave file (<code>Content-Type: audio/x-wav</code>)</p>
+<p>
+    This endpoint is designed for serving synthesized wave files by <code>/sonos</code> endpoint
+    to Sonos devices and is not intended to be used directly by you. After hitting
+    the <code>/sonos</code> endpoint, requested message is synthesized to wave file which is being
+    served through the <code>/sonos/{fileName}</code> endpoint and Sonos device is requested to
+    change its source stream URL to this file. The already generated files are stored in cache
+    directory so there is no need to resynthesize frequently-used message which reduces
+    the overall time needed to complete the request. You are still able to invalidate
+    this cache via application settings.
 </p>
 </body>
 </html>
