@@ -22,6 +22,8 @@ class TTS(private val context: Context, initListener: TextToSpeech.OnInitListene
       val filename = "tts_$digest.wav"
       val file = File(context.cacheDir, filename)
 
+      file.takeIf { it.exists() } ?.let { return it }
+
       val uuid = UUID.randomUUID().toString()
       val lock = Lock()
       tts.setOnUtteranceProgressListener(TTSProcessListener(uuid, lock))
