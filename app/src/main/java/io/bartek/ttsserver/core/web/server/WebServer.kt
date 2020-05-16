@@ -7,9 +7,6 @@ import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
-import io.bartek.ttsserver.ui.preference.PreferenceKey
-import io.bartek.ttsserver.service.foreground.ForegroundService
-import io.bartek.ttsserver.service.state.ServiceState
 import io.bartek.ttsserver.core.sonos.queue.SonosQueue
 import io.bartek.ttsserver.core.tts.engine.TTSEngine
 import io.bartek.ttsserver.core.tts.status.TTSStatus
@@ -17,6 +14,10 @@ import io.bartek.ttsserver.core.web.dto.BaseDTO
 import io.bartek.ttsserver.core.web.dto.SonosDTO
 import io.bartek.ttsserver.core.web.endpoint.Endpoint
 import io.bartek.ttsserver.core.web.endpoint.EndpointMatcher
+import io.bartek.ttsserver.core.web.exception.WebException
+import io.bartek.ttsserver.service.foreground.ForegroundService
+import io.bartek.ttsserver.service.state.ServiceState
+import io.bartek.ttsserver.ui.preference.PreferenceKey
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -37,10 +38,12 @@ class WebServer(
             return dispatch(it)
          }
 
-         throw ResponseException(BAD_REQUEST, "")
+         throw WebException(BAD_REQUEST, "Unknown error")
+      } catch (e: WebException) {
+         return newFixedLengthResponse(e.status, MIME_JSON, e.json)
+      } catch (e: Exception) {
+         return newFixedLengthResponse(INTERNAL_ERROR, MIME_PLAINTEXT, e.toString())
       }
-      catch (e: ResponseException) { throw e }
-      catch (e: Exception) { throw ResponseException(INTERNAL_ERROR, e.toString(), e) }
    }
 
    private fun dispatch(it: IHTTPSession): Response {
@@ -49,37 +52,33 @@ class WebServer(
          Endpoint.WAVE -> wave(it)
          Endpoint.SONOS -> sonos(it)
          Endpoint.SONOS_CACHE -> sonosCache(it)
-         Endpoint.UNKNOWN -> throw ResponseException(NOT_FOUND, "")
+         Endpoint.UNKNOWN -> throw WebException(NOT_FOUND, "")
       }
    }
 
    private fun assertThatTTSIsReady() {
       if (tts.status != TTSStatus.READY) {
-         throw ResponseException(NOT_ACCEPTABLE, "Server is not ready yet")
+         throw WebException(NOT_ACCEPTABLE, "Server is not ready yet")
       }
    }
 
    private fun say(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SAY_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND, "")
       }
 
       if (session.method != Method.POST) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
+         throw WebException(METHOD_NOT_ALLOWED, "Only POST methods are allowed")
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw ResponseException(BAD_REQUEST, "")
+         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
       }
 
-      val (text, language) = extractBody(session) {
-         BaseDTO.fromJSON(
-            it
-         )
-      }
+      val dto = extractBody(session) { BaseDTO(it) }
 
-      tts.performTTS(text, language)
-      return newFixedLengthResponse(OK, MIME_PLAINTEXT, "")
+      tts.performTTS(dto.text, dto.language)
+      return newFixedLengthResponse(OK, MIME_JSON, dto.json)
    }
 
    private fun <T> extractBody(session: IHTTPSession, provider: (String) -> T): T {
@@ -91,73 +90,62 @@ class WebServer(
 
    private fun wave(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_WAVE_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND, "")
       }
 
       if (session.method != Method.POST) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
+         throw WebException(METHOD_NOT_ALLOWED, "Only POST methods are allowed")
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw ResponseException(BAD_REQUEST, "")
+         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
       }
 
-      val (text, language) = extractBody(session) {
-         BaseDTO.fromJSON(
-            it
-         )
-      }
+      val dto = extractBody(session) {BaseDTO(it) }
 
-      val (stream, size) = tts.fetchTTSStream(text, language)
-      return newFixedLengthResponse(OK,
-         MIME_WAVE, stream, size)
+      val (stream, size) = tts.fetchTTSStream(dto.text, dto.language)
+      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
    }
 
    private fun sonos(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND, "")
       }
 
       if (session.method != Method.POST) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
+         throw WebException(METHOD_NOT_ALLOWED, "Only POST methods are allowed")
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw ResponseException(BAD_REQUEST, "")
+         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
       }
 
-      val data = extractBody(session) {
-         SonosDTO.fromJSON(
-            it
-         )
-      }
+      val dto = extractBody(session) { SonosDTO(it) }
 
-      sonos.push(data)
+      sonos.push(dto)
 
-      return newFixedLengthResponse(ACCEPTED, MIME_PLAINTEXT, "")
+      return newFixedLengthResponse(ACCEPTED, MIME_JSON, dto.json)
    }
 
    private fun sonosCache(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
-         throw ResponseException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND, "")
       }
 
       if (session.method != Method.GET) {
-         throw ResponseException(METHOD_NOT_ALLOWED, "")
+         throw WebException(METHOD_NOT_ALLOWED, "Only GET methods are allowed")
       }
 
-      val filename =
-         Uri.parse(session.uri).lastPathSegment ?: throw ResponseException(BAD_REQUEST, "")
+      val filename = Uri.parse(session.uri).lastPathSegment ?: throw WebException(BAD_REQUEST, "")
       val file = File(context.cacheDir, filename)
 
       if (!file.exists()) {
-         throw ResponseException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND, "")
       }
 
       val stream = BufferedInputStream(FileInputStream(file))
       val size = file.length()
-      return newFixedLengthResponse(OK,
-         MIME_WAVE, stream, size)
+      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
    }
 
    override fun start() {
