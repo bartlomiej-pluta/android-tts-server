@@ -18,6 +18,7 @@ import io.bartek.ttsserver.core.web.exception.WebException
 import io.bartek.ttsserver.service.foreground.ForegroundService
 import io.bartek.ttsserver.service.state.ServiceState
 import io.bartek.ttsserver.ui.preference.PreferenceKey
+import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -52,7 +53,7 @@ class WebServer(
          Endpoint.WAVE -> wave(it)
          Endpoint.SONOS -> sonos(it)
          Endpoint.SONOS_CACHE -> sonosCache(it)
-         Endpoint.UNKNOWN -> throw WebException(NOT_FOUND, "")
+         Endpoint.UNKNOWN -> throw WebException(NOT_FOUND)
       }
    }
 
@@ -64,7 +65,7 @@ class WebServer(
 
    private fun say(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SAY_ENDPOINT, true)) {
-         throw WebException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND)
       }
 
       if (session.method != Method.POST) {
@@ -72,13 +73,13 @@ class WebServer(
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
+         throw WebException(BAD_REQUEST, "Only JSON data is accepted")
       }
 
       val dto = extractBody(session) { BaseDTO(it) }
 
       tts.performTTS(dto.text, dto.language)
-      return newFixedLengthResponse(OK, MIME_JSON, dto.json)
+      return newFixedLengthResponse(OK, MIME_JSON, SUCCESS_RESPONSE)
    }
 
    private fun <T> extractBody(session: IHTTPSession, provider: (String) -> T): T {
@@ -90,7 +91,7 @@ class WebServer(
 
    private fun wave(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_WAVE_ENDPOINT, true)) {
-         throw WebException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND)
       }
 
       if (session.method != Method.POST) {
@@ -98,10 +99,10 @@ class WebServer(
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
+         throw WebException(BAD_REQUEST, "Only JSON data is accepted")
       }
 
-      val dto = extractBody(session) {BaseDTO(it) }
+      val dto = extractBody(session) { BaseDTO(it) }
 
       val (stream, size) = tts.fetchTTSStream(dto.text, dto.language)
       return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
@@ -109,7 +110,7 @@ class WebServer(
 
    private fun sonos(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
-         throw WebException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND)
       }
 
       if (session.method != Method.POST) {
@@ -117,30 +118,30 @@ class WebServer(
       }
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
-         throw WebException(BAD_REQUEST, "The only accepted format is JSON")
+         throw WebException(BAD_REQUEST, "Only JSON data is accepted")
       }
 
       val dto = extractBody(session) { SonosDTO(it) }
 
       sonos.push(dto)
 
-      return newFixedLengthResponse(ACCEPTED, MIME_JSON, dto.json)
+      return newFixedLengthResponse(ACCEPTED, MIME_JSON, QUEUED_RESPONSE)
    }
 
    private fun sonosCache(session: IHTTPSession): Response {
       if (!preferences.getBoolean(PreferenceKey.ENABLE_SONOS_ENDPOINT, true)) {
-         throw WebException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND)
       }
 
       if (session.method != Method.GET) {
          throw WebException(METHOD_NOT_ALLOWED, "Only GET methods are allowed")
       }
 
-      val filename = Uri.parse(session.uri).lastPathSegment ?: throw WebException(BAD_REQUEST, "")
+      val filename = Uri.parse(session.uri).lastPathSegment ?: throw WebException(BAD_REQUEST)
       val file = File(context.cacheDir, filename)
 
       if (!file.exists()) {
-         throw WebException(NOT_FOUND, "")
+         throw WebException(NOT_FOUND)
       }
 
       val stream = BufferedInputStream(FileInputStream(file))
@@ -172,5 +173,9 @@ class WebServer(
       private const val MIME_JSON = "application/json"
       private const val MIME_WAVE = "audio/x-wav"
       private const val CONTENT_TYPE = "content-type"
+      private val SUCCESS_RESPONSE = response("Request has been completed")
+      private val QUEUED_RESPONSE = response("Request has been queued")
+
+      private fun response(status: String) = JSONObject().put("message", status).toString()
    }
 }

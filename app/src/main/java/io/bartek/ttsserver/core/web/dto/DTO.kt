@@ -5,9 +5,6 @@ import io.bartek.ttsserver.core.web.exception.WebException
 import org.json.JSONObject
 
 abstract class DTO(json: String) : JSONObject(json) {
-   val json: String
-      get() = toString()
-
    protected fun requiredString(key: String) = this.optString(key)
       .takeIf { it.isNotBlank() }
       ?: throw WebException(Response.Status.BAD_REQUEST, "The '$key' field is required")
