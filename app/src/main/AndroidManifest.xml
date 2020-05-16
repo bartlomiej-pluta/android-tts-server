@@ -26,22 +26,22 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name="io.bartek.ttsserver.help.HelpActivity"
-            android:parentActivityName=".ttsserver.MainActivity" />
+            android:name="io.bartek.ttsserver.ui.help.HelpActivity"
+            android:parentActivityName=".ttsserver.ui.main.MainActivity" />
 
         <activity
-            android:name="io.bartek.ttsserver.preference.PreferencesActivity"
+            android:name="io.bartek.ttsserver.ui.preference.PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:parentActivityName=".ttsserver.MainActivity" />
+            android:parentActivityName=".ttsserver.ui.main.MainActivity" />
 
         <service
-            android:name="io.bartek.ttsserver.service.ForegroundService"
+            android:name="io.bartek.ttsserver.service.foreground.ForegroundService"
             android:enabled="true"
             android:exported="true"
             android:permission="io.bartek.permission.TTS_HTTP_SERVICE" />
 
         <activity
-            android:name=".ttsserver.MainActivity"
+            android:name=".ttsserver.ui.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
