@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import io.bartek.ttsserver.service.ForegroundNotificationFactory
-import io.bartek.ttsserver.sonos.SonosQueue
+import io.bartek.ttsserver.sonos.queue.SonosQueue
 import io.bartek.ttsserver.tts.engine.TTSEngine
 import io.bartek.ttsserver.tts.status.TTSStatusHolder
 import io.bartek.ttsserver.util.NetworkUtil

@@ -10,7 +10,7 @@ import fi.iki.elonen.NanoHTTPD.Response.Status.*
 import io.bartek.ttsserver.preference.PreferenceKey
 import io.bartek.ttsserver.service.ForegroundService
 import io.bartek.ttsserver.service.ServiceState
-import io.bartek.ttsserver.sonos.SonosQueue
+import io.bartek.ttsserver.sonos.queue.SonosQueue
 import io.bartek.ttsserver.tts.engine.TTSEngine
 import io.bartek.ttsserver.tts.status.TTSStatus
 import io.bartek.ttsserver.web.dto.BaseDTO
@@ -73,7 +73,7 @@ class WebServer(
       }
 
       val (text, language) = extractBody(session) {
-         SonosDTO.fromJSON(
+         BaseDTO.fromJSON(
             it
          )
       }
@@ -103,7 +103,7 @@ class WebServer(
       }
 
       val (text, language) = extractBody(session) {
-         SonosDTO.fromJSON(
+         BaseDTO.fromJSON(
             it
          )
       }
@@ -127,7 +127,7 @@ class WebServer(
       }
 
       val data = extractBody(session) {
-         BaseDTO.fromJSON(
+         SonosDTO.fromJSON(
             it
          )
       }

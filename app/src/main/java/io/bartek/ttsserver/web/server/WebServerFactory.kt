@@ -3,7 +3,7 @@ package io.bartek.ttsserver.web.server
 import android.content.Context
 import android.content.SharedPreferences
 import io.bartek.ttsserver.preference.PreferenceKey
-import io.bartek.ttsserver.sonos.SonosQueue
+import io.bartek.ttsserver.sonos.queue.SonosQueue
 import io.bartek.ttsserver.tts.engine.TTSEngine
 
 class WebServerFactory(
