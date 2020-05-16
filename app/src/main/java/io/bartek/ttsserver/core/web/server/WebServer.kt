@@ -41,9 +41,15 @@ class WebServer(
 
          throw WebException(BAD_REQUEST, "Unknown error")
       } catch (e: WebException) {
-         return newFixedLengthResponse(e.status, MIME_JSON, e.json)
+         return handleWebException(e)
       } catch (e: Exception) {
-         return newFixedLengthResponse(INTERNAL_ERROR, MIME_PLAINTEXT, e.toString())
+         return handleUnknownException(e)
+      }
+   }
+
+   private fun assertThatTTSIsReady() {
+      if (tts.status != TTSStatus.READY) {
+         throw WebException(NOT_ACCEPTABLE, "Server is not ready yet")
       }
    }
 
@@ -57,10 +63,16 @@ class WebServer(
       }
    }
 
-   private fun assertThatTTSIsReady() {
-      if (tts.status != TTSStatus.READY) {
-         throw WebException(NOT_ACCEPTABLE, "Server is not ready yet")
+   private fun handleWebException(e: WebException) =
+      newFixedLengthResponse(e.status, MIME_JSON, e.json)
+
+   private fun handleUnknownException(e: Exception): Response {
+      val stacktrace = when (preferences.getBoolean(PreferenceKey.ENABLE_HTTP_DEBUG, false)) {
+         true -> e.toString()
+         false -> ""
       }
+
+      return newFixedLengthResponse(INTERNAL_ERROR, MIME_PLAINTEXT, stacktrace)
    }
 
    private fun say(session: IHTTPSession): Response {

@@ -20,6 +20,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var sayEndpointPreference: SwitchPreference
    private lateinit var waveEndpointPreference: SwitchPreference
    private lateinit var sonosEndpointPreference: SwitchPreference
+   private lateinit var httpDebugPreference: SwitchPreference
    private lateinit var ttsEnginePreference: Preference
    private lateinit var clearSonosCachePreference: Preference
 
@@ -55,6 +56,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
       setPreferencesFromResource(R.xml.preferences, rootKey)
       portPreference = findPreference(PreferenceKey.PORT)!!
       portPreference.setOnBindEditTextListener { it.inputType = InputType.TYPE_CLASS_NUMBER }
+      httpDebugPreference = findPreference(PreferenceKey.ENABLE_HTTP_DEBUG)!!
       sayEndpointPreference = findPreference(PreferenceKey.ENABLE_SAY_ENDPOINT)!!
       waveEndpointPreference = findPreference(PreferenceKey.ENABLE_WAVE_ENDPOINT)!!
       sonosEndpointPreference = findPreference(PreferenceKey.ENABLE_SONOS_ENDPOINT)!!
