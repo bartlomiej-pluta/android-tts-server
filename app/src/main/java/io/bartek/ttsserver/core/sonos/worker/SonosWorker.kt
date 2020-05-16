@@ -1,12 +1,10 @@
 package io.bartek.ttsserver.core.sonos.worker
 
-import com.vmichalak.sonoscontroller.SonosDevice
 import com.vmichalak.sonoscontroller.SonosDiscovery
-import com.vmichalak.sonoscontroller.model.PlayState
-import io.bartek.ttsserver.service.foreground.ForegroundService
-import io.bartek.ttsserver.service.state.ServiceState
 import io.bartek.ttsserver.core.tts.engine.TTSEngine
 import io.bartek.ttsserver.core.web.dto.SonosDTO
+import io.bartek.ttsserver.service.foreground.ForegroundService
+import io.bartek.ttsserver.service.state.ServiceState
 import java.util.concurrent.BlockingQueue
 
 class SonosWorker(
@@ -29,21 +27,6 @@ class SonosWorker(
          val file = tts.createTTSFile(data.text, data.language)
          val filename = file.name
          val url = "http://$host:$port/sonos/$filename"
-         it.announce(url, data.volume)
+         it.clip(url, data.volume, "")
       }
-
-   private fun SonosDevice.announce(url: String, volume: Int) {
-      val currentPlayState = this.playState
-      val currentVolume = this.volume
-
-      this.stop()
-      this.volume = volume
-      this.clip(url, "")
-
-      this.volume = currentVolume
-      when(currentPlayState) {
-         PlayState.PLAYING -> this.play()
-         else -> this.stop()
-      }
-   }
 }
