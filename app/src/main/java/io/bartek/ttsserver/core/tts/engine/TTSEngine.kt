@@ -2,8 +2,6 @@ package io.bartek.ttsserver.core.tts.engine
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import io.bartek.ttsserver.core.tts.exception.TTSException
-import io.bartek.ttsserver.core.tts.listener.Lock
 import io.bartek.ttsserver.core.tts.listener.TTSProcessListener
 import io.bartek.ttsserver.core.tts.model.TTSStream
 import io.bartek.ttsserver.core.tts.status.TTSStatus
@@ -29,26 +27,15 @@ class TTSEngine(
       val filename = "tts_$digest.wav"
       val file = File(context.cacheDir, filename)
 
-      file.takeIf { it.exists() } ?.let { return it }
+      file.takeIf { it.exists() }?.let { return it }
 
       val uuid = UUID.randomUUID().toString()
-      val lock = Lock()
-      tts.setOnUtteranceProgressListener(
-         TTSProcessListener(
-            uuid,
-            lock
-         )
-      )
+      val listener = TTSProcessListener(uuid)
+      tts.setOnUtteranceProgressListener(listener)
 
-      synchronized(lock) {
-         tts.language = language
-         tts.synthesizeToFile(text, null, file, uuid)
-         lock.wait()
-      }
-
-      if (!lock.success) {
-         throw TTSException()
-      }
+      tts.language = language
+      tts.synthesizeToFile(text, null, file, uuid)
+      listener.await()
 
       return file
    }
@@ -63,23 +50,12 @@ class TTSEngine(
       val file = createTempFile("tmp_tts_server", ".wav")
 
       val uuid = UUID.randomUUID().toString()
-      val lock = Lock()
-      tts.setOnUtteranceProgressListener(
-         TTSProcessListener(
-            uuid,
-            lock
-         )
-      )
+      val listener = TTSProcessListener(uuid)
+      tts.setOnUtteranceProgressListener(listener)
 
-      synchronized(lock) {
-         tts.language = language
-         tts.synthesizeToFile(text, null, file, uuid)
-         lock.wait()
-      }
-
-      if (!lock.success) {
-         throw TTSException()
-      }
+      tts.language = language
+      tts.synthesizeToFile(text, null, file, uuid)
+      listener.await()
 
       val stream = BufferedInputStream(FileInputStream(file))
       val length = file.length()
@@ -91,23 +67,12 @@ class TTSEngine(
 
    fun performTTS(text: String, language: Locale) {
       val uuid = UUID.randomUUID().toString()
-      val lock = Lock()
-      tts.setOnUtteranceProgressListener(
-         TTSProcessListener(
-            uuid,
-            lock
-         )
-      )
+      val listener = TTSProcessListener(uuid)
+      tts.setOnUtteranceProgressListener(listener)
 
-      synchronized(lock) {
-         tts.language = language
-         tts.speak(text, TextToSpeech.QUEUE_ADD, null, uuid)
-         lock.wait()
-      }
-
-      if (!lock.success) {
-         throw TTSException()
-      }
+      tts.language = language
+      tts.speak(text, TextToSpeech.QUEUE_ADD, null, uuid)
+      listener.await()
    }
 }
 
