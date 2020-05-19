@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.bartek">
+    package="com.bartlomiejpluta">
 
     <permission
-        android:name="io.bartek.permission.TTS_HTTP_SERVICE"
+        android:name="com.bartlomiejpluta.permission.TTS_HTTP_SERVICE"
         android:description="@string/permission_http_server_description"
         android:label="@string/permission_http_server_label"
         android:protectionLevel="normal" />
@@ -13,10 +13,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="io.bartek.permission.TTS_HTTP_SERVICE" />
+    <uses-permission android:name="com.bartlomiejpluta.permission.TTS_HTTP_SERVICE" />
 
     <application
-        android:name=".ttsserver.TTSApplication"
+        android:name="com.bartlomiejpluta.ttsserver.TTSApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,22 +26,22 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name="io.bartek.ttsserver.ui.help.HelpActivity"
-            android:parentActivityName=".ttsserver.ui.main.MainActivity" />
+            android:name="com.bartlomiejpluta.ttsserver.ui.help.HelpActivity"
+            android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
 
         <activity
-            android:name="io.bartek.ttsserver.ui.preference.PreferencesActivity"
+            android:name="com.bartlomiejpluta.ttsserver.ui.preference.PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:parentActivityName=".ttsserver.ui.main.MainActivity" />
+            android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
 
         <service
-            android:name="io.bartek.ttsserver.service.foreground.ForegroundService"
+            android:name="com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService"
             android:enabled="true"
             android:exported="true"
-            android:permission="io.bartek.permission.TTS_HTTP_SERVICE" />
+            android:permission="com.bartlomiejpluta.permission.TTS_HTTP_SERVICE" />
 
         <activity
-            android:name=".ttsserver.ui.main.MainActivity"
+            android:name="com.bartlomiejpluta.ttsserver.ui.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
