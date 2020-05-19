@@ -9,25 +9,32 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import io.bartek.R
+import io.bartek.ttsserver.core.util.NetworkUtil
 import io.bartek.ttsserver.ui.main.MainActivity
 
-class ForegroundNotificationFactory(private val context: Context) {
+class ForegroundNotificationFactory(
+   private val context: Context,
+   private val networkUtil: NetworkUtil
+) {
    private val oreo: Boolean
       get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
-   fun createForegroundNotification(port: Int): Notification {
+   private val notificationContent: String
+      get() = context.getString(R.string.service_notification_text, networkUtil.serverAddress)
+
+   fun createForegroundNotification(): Notification {
       createNotificationChannel()
-      return buildNotification(port, createPendingIntent())
+      return buildNotification(createPendingIntent())
    }
 
    @Suppress("DEPRECATION")
-   private fun buildNotification(port: Int, pendingIntent: PendingIntent?) =
+   private fun buildNotification(pendingIntent: PendingIntent?) =
       provideNotificationBuilder()
          .setContentTitle(context.resources.getString(R.string.service_notification_title))
-         .setContentText(context.resources.getString(R.string.service_notification_text, port))
+         .setContentText(notificationContent)
          .setContentIntent(pendingIntent)
          .setSmallIcon(R.drawable.ic_foreground_service)
-         .setTicker(context.getString(R.string.service_notification_text, port))
+         .setTicker(notificationContent)
          .setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
          .build()
 
@@ -57,7 +64,8 @@ class ForegroundNotificationFactory(private val context: Context) {
    @Suppress("DEPRECATION")
    @SuppressLint("NewApi")
    private fun provideNotificationBuilder() =
-      if (oreo) Notification.Builder(context,
+      if (oreo) Notification.Builder(
+         context,
          NOTIFICATION_CHANNEL_ID
       )
       else Notification.Builder(context)

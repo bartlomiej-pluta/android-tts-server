@@ -8,10 +8,17 @@
     tools:context=".ttsserver.ui.main.MainActivity">
 
     <TextView
-        android:id="@+id/prompt_text"
+        android:id="@+id/server_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="@string/main_activity_server_status_down"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/prompt_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/main_activity_prompt_to_run"
         android:textAlignment="center" />
 

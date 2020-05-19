@@ -9,8 +9,7 @@ import java.util.concurrent.BlockingQueue
 
 class SonosWorker(
    private val tts: TTSEngine,
-   private val host: String,
-   private val port: Int,
+   private val address: String,
    private val queue: BlockingQueue<SonosDTO>
 ) : Runnable {
 
@@ -26,7 +25,7 @@ class SonosWorker(
       SonosDiscovery.discover().firstOrNull { it.zoneGroupState.name == data.zone }?.let {
          val file = tts.createTTSFile(data.text, data.language)
          val filename = file.name
-         val url = "http://$host:$port/sonos/$filename"
+         val url = "$address/sonos/$filename"
          it.clip(url, data.volume, "")
       }
 }

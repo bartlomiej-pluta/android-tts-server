@@ -6,12 +6,12 @@ import android.speech.tts.TextToSpeech
 import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
-import io.bartek.ttsserver.service.notification.ForegroundNotificationFactory
 import io.bartek.ttsserver.core.sonos.queue.SonosQueue
 import io.bartek.ttsserver.core.tts.engine.TTSEngine
 import io.bartek.ttsserver.core.tts.status.TTSStatusHolder
 import io.bartek.ttsserver.core.util.NetworkUtil
 import io.bartek.ttsserver.core.web.server.WebServerFactory
+import io.bartek.ttsserver.service.notification.ForegroundNotificationFactory
 import javax.inject.Singleton
 
 @Module
@@ -38,13 +38,12 @@ class TTSModule {
       context: Context,
       tts: TTSEngine,
       sonos: SonosQueue
-   ) =
-      WebServerFactory(
-         preferences,
-         context,
-         tts,
-         sonos
-      )
+   ) = WebServerFactory(
+      preferences,
+      context,
+      tts,
+      sonos
+   )
 
    @Provides
    @Singleton
@@ -52,17 +51,17 @@ class TTSModule {
 
    @Provides
    @Singleton
-   fun networkUtil(context: Context) = NetworkUtil(context)
+   fun networkUtil(context: Context, preferences: SharedPreferences) =
+      NetworkUtil(context, preferences)
 
    @Provides
    @Singleton
-   fun sonosQueue(tts: TTSEngine, networkUtil: NetworkUtil, preferences: SharedPreferences) =
-      SonosQueue(tts, networkUtil, preferences)
+   fun sonosQueue(tts: TTSEngine, networkUtil: NetworkUtil) = SonosQueue(tts, networkUtil)
 
    @Provides
    @Singleton
-   fun foregroundNotificationFactory(context: Context) =
-      ForegroundNotificationFactory(
-         context
-      )
+   fun foregroundNotificationFactory(
+      context: Context,
+      networkUtil: NetworkUtil
+   ) = ForegroundNotificationFactory(context, networkUtil)
 }

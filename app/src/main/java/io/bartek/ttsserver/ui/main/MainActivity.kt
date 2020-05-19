@@ -1,9 +1,6 @@
 package io.bartek.ttsserver.ui.main
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -14,19 +11,27 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dagger.android.support.DaggerAppCompatActivity
 import io.bartek.R
-import io.bartek.ttsserver.ui.help.HelpActivity
-import io.bartek.ttsserver.ui.preference.PreferencesActivity
+import io.bartek.ttsserver.core.util.NetworkUtil
 import io.bartek.ttsserver.service.foreground.ForegroundService
 import io.bartek.ttsserver.service.state.ServiceState
+import io.bartek.ttsserver.ui.help.HelpActivity
+import io.bartek.ttsserver.ui.preference.PreferencesActivity
 import javax.inject.Inject
 
 
 class MainActivity : DaggerAppCompatActivity() {
    private lateinit var serverControlButton: AppCompatImageButton
+   private lateinit var serverStatus: TextView
    private lateinit var promptText: TextView
 
    @Inject
    lateinit var context: Context
+
+   @Inject
+   lateinit var preferences: SharedPreferences
+
+   @Inject
+   lateinit var networkUtil: NetworkUtil
 
    private val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
@@ -55,10 +60,13 @@ class MainActivity : DaggerAppCompatActivity() {
       when (newState) {
          ServiceState.STOPPED -> {
             serverControlButton.setImageResource(R.drawable.ic_power_off)
+            serverStatus.text = getString(R.string.main_activity_server_status_down)
             promptText.text = getString(R.string.main_activity_prompt_to_run)
          }
          ServiceState.RUNNING -> {
             serverControlButton.setImageResource(R.drawable.ic_power_on)
+            serverStatus.text =
+               getString(R.string.main_activity_server_status_up, networkUtil.serverAddress)
             promptText.text = getString(R.string.main_activity_prompt_to_stop)
          }
       }
@@ -68,6 +76,7 @@ class MainActivity : DaggerAppCompatActivity() {
       super.onCreate(savedInstanceState)
       setContentView(R.layout.activity_main)
       serverControlButton = findViewById(R.id.server_control_button)
+      serverStatus = findViewById(R.id.server_status)
       promptText = findViewById(R.id.prompt_text)
    }
 

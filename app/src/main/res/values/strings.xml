@@ -4,15 +4,15 @@
     <string name="permission_http_server_label">booting up TTS HTTP server</string>
     <string name="permission_http_server_description">Allows application to run HTTP server which provides a TTS services.</string>
 
-    <string name="main_activity_run">Run</string>
-    <string name="main_activity_stop">Stop</string>
+    <string name="main_activity_server_status_down">The server is down</string>
+    <string name="main_activity_server_status_up">The server is up: %1$s</string>
     <string name="main_activity_prompt_to_run">Tap power on button to run the server</string>
     <string name="main_activity_prompt_to_stop">Tap power off button to stop the server</string>
 
     <string name="service_notification_category_name">HTTP Server</string>
     <string name="service_notification_category_description">The fixed notification keeping the HTTP server alive</string>
     <string name="service_notification_title">Server is running</string>
-    <string name="service_notification_text">The HTTP server is listening on port %1$d</string>
+    <string name="service_notification_text">The HTTP server is listening on address %1$s</string>
 
     <string name="title_activity_preferences">Settings</string>
     <string name="preference_port_summary">The desired port on which HTTP server is intended to listening</string>

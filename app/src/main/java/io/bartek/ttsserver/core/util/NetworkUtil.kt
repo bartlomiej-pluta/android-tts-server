@@ -2,11 +2,16 @@ package io.bartek.ttsserver.core.util
 
 import android.content.Context
 import android.content.Context.WIFI_SERVICE
+import android.content.SharedPreferences
 import android.net.wifi.WifiManager
+import io.bartek.ttsserver.ui.preference.PreferenceKey
 import java.net.InetAddress
 
 
-class NetworkUtil(private val context: Context) {
+class NetworkUtil(private val context: Context, private val preferences: SharedPreferences) {
+   val serverAddress: String
+      get() = "http://${getIpAddress()}:${preferences.getInt(PreferenceKey.PORT, 8000)}"
+
    fun getIpAddress(): String {
       return (context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager).let {
          inetAddress(it.dhcpInfo.ipAddress).toString().substring(1)
