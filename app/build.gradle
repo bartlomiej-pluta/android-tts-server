@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.2.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.github.bartlomiej-pluta:sonos-controller:master'
+    implementation 'com.bartlomiejpluta:sonos-controller:v.0.2'
     implementation 'com.google.dagger:dagger-android:2.15'
     implementation 'com.google.dagger:dagger-android-support:2.15'
     kapt 'com.google.dagger:dagger-android-processor:2.15'
