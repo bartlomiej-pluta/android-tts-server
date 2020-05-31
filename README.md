@@ -92,3 +92,16 @@ change its source stream URL to this file. The already generated files are store
 directory so there is no need to resynthesize frequently-used message which reduces
 the overall time needed to complete the request. You are still able to invalidate
 this cache via application settings.
+
+
+## The `/gong.wav` endpoint
+```
+GET /gong.wav
+```
+*Returns:* `200 OK` with gong wave file (`Content-Type: audio/x-wav`)
+
+This endpoint is designed for serving gong wave to Sonos devices
+and &ndash; similar to `/sonos/{fileName}` &ndash; is not intended
+to be used directly by you. If gong is enabled in the settings,
+Sonos is requested to change its source stream URL to a gong
+file prior to the actual announcement being served by `/sonos/{fileName}` endpoint.

@@ -53,8 +53,8 @@ POST /say
 <p><b>Returns:</b> <code>200 OK</code> with empty body</p>
 <p>
     The <code>/say</code> endpoint allows you to perform TTS task using device's speakers or the
-    external ones connected to it via jack, Bluetooth etc. For example if you have some 
-    old PC-speakers you are able to connect your device to them via line port and 
+    external ones connected to it via jack, Bluetooth etc. For example if you have some
+    old PC-speakers you are able to connect your device to them via line port and
     get a complete speech-based notification system.
 </p>
 
@@ -110,6 +110,22 @@ GET /sonos/{fileName}
     directory so there is no need to resynthesize frequently-used message which reduces
     the overall time needed to complete the request. You are still able to invalidate
     this cache via application settings.
+</p>
+
+<h2>The <code>/gong.wav</code> endpoint</h2>
+<pre>
+GET /gong.wav
+</pre>
+<p>
+    <b>Returns: </b> <code>200 OK</code>
+    with gong wave file (<code>Content-Type: audio/x-wav</code>)
+</p>
+<p>
+    This endpoint is designed for serving gong wave file
+    to Sonos devices and &ndash; similar to <code>/sonos/{fileName}</code> &ndash;
+    is not intended to be used directly by you. If gong is enabled in the settings,
+    Sonos is requested to change its source stream URL to a gong file prior to
+    the actual announcement being served by <code>/sonos/{fileName}</code> endpoint.
 </p>
 </body>
 </html>
