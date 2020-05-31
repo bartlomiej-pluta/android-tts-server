@@ -28,8 +28,12 @@ class TTSModule {
 
    @Provides
    @Singleton
-   fun tts(context: Context, textToSpeech: TextToSpeech, ttsStatusHolder: TTSStatusHolder) =
-      TTSEngine(context, textToSpeech, ttsStatusHolder)
+   fun tts(
+      context: Context,
+      textToSpeech: TextToSpeech,
+      ttsStatusHolder: TTSStatusHolder,
+      preferences: SharedPreferences
+   ) = TTSEngine(context, textToSpeech, ttsStatusHolder, preferences)
 
    @Provides
    @Singleton
