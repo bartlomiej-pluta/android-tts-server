@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
+import com.bartlomiejpluta.ttsserver.core.tts.exception.TTSException
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
 import com.bartlomiejpluta.ttsserver.core.web.dto.BaseDTO
 import com.bartlomiejpluta.ttsserver.core.web.dto.SonosDTO
@@ -59,6 +60,7 @@ class WebServer(
          Endpoint.WAVE -> wave(it)
          Endpoint.SONOS -> sonos(it)
          Endpoint.SONOS_CACHE -> sonosCache(it)
+         Endpoint.GONG -> gong(it)
          Endpoint.UNKNOWN -> throw WebException(NOT_FOUND)
       }
    }
@@ -158,6 +160,29 @@ class WebServer(
 
       val stream = BufferedInputStream(FileInputStream(file))
       val size = file.length()
+      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
+   }
+
+   private fun gong(session: IHTTPSession): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_GONG, false)) {
+         throw WebException(NOT_FOUND)
+      }
+
+      if (session.method != Method.GET) {
+         throw WebException(METHOD_NOT_ALLOWED, "Only GET methods are allowed")
+      }
+
+      val uri = Uri.parse(
+         preferences.getString(PreferenceKey.GONG, null) ?: throw TTSException()
+      )
+
+      val size = context.contentResolver.openFileDescriptor(uri, "r")?.statSize
+         ?: throw TTSException()
+
+      val stream = BufferedInputStream(
+         context.contentResolver.openInputStream(uri) ?: throw TTSException()
+      )
+
       return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
    }
 

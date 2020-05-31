@@ -60,7 +60,8 @@ class TTSModule {
 
    @Provides
    @Singleton
-   fun sonosQueue(tts: TTSEngine, networkUtil: NetworkUtil) = SonosQueue(tts, networkUtil)
+   fun sonosQueue(tts: TTSEngine, preferences: SharedPreferences, networkUtil: NetworkUtil) =
+      SonosQueue(tts, preferences, networkUtil)
 
    @Provides
    @Singleton
