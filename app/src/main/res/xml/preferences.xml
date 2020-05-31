@@ -41,6 +41,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preference_category_tts" app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="preference_enable_gong"
+            android:summary="@string/preference_enable_gong_summary"
+            android:title="@string/preference_enable_gong_title"
+            app:iconSpaceReserved="false" />
         <Preference
             android:key="preference_tts"
             android:summary="@string/preference_tts_summary"

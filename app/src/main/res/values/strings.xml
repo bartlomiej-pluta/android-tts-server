@@ -25,6 +25,9 @@
     <string name="preference_enable_sonos_endpoint_title">Enable /sonos endpoint</string>
     <string name="preference_http_debug_summary">Attach the stacktrace to each error HTTP response if available</string>
     <string name="preference_http_debug_title">Enable HTTP debugging</string>
+    <string name="preference_gong_picker_prompt">Choose a gong file</string>
+    <string name="preference_enable_gong_summary">Play a signal gong before the announcement</string>
+    <string name="preference_enable_gong_title">Enable gong</string>
     <string name="preference_tts_summary">Go to platform\'s TTS engine settings and adjust its parameters</string>
     <string name="preference_tts_title">TTS engine settings</string>
     <string name="preference_invalidate_sonos_cache_summary">Clear application cache directory from already generated Sonos TTS data for given sentences. You typically want to do it when you change the TTS engine\'s voice settings.</string>
