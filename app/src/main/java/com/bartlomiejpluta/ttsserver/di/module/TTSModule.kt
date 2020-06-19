@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
+import com.bartlomiejpluta.ttsserver.core.util.AudioConverter
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import com.bartlomiejpluta.ttsserver.core.web.server.WebServerFactory
 import com.bartlomiejpluta.ttsserver.service.notification.ForegroundNotificationFactory
@@ -32,8 +33,9 @@ class TTSModule {
       context: Context,
       textToSpeech: TextToSpeech,
       ttsStatusHolder: TTSStatusHolder,
-      preferences: SharedPreferences
-   ) = TTSEngine(context, textToSpeech, ttsStatusHolder, preferences)
+      preferences: SharedPreferences,
+      converter: AudioConverter
+   ) = TTSEngine(context, textToSpeech, ttsStatusHolder, preferences, converter)
 
    @Provides
    @Singleton
@@ -57,6 +59,10 @@ class TTSModule {
    @Singleton
    fun networkUtil(context: Context, preferences: SharedPreferences) =
       NetworkUtil(context, preferences)
+
+   @Provides
+   @Singleton
+   fun adudioConverter(context: Context) = AudioConverter(context)
 
    @Provides
    @Singleton

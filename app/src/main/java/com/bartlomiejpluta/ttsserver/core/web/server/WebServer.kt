@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import cafe.adriel.androidaudioconverter.model.AudioFormat
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.exception.TTSException
@@ -14,6 +15,7 @@ import com.bartlomiejpluta.ttsserver.core.web.dto.SonosDTO
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.EndpointMatcher
 import com.bartlomiejpluta.ttsserver.core.web.exception.WebException
+import com.bartlomiejpluta.ttsserver.core.web.mime.MimeType
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
@@ -57,7 +59,12 @@ class WebServer(
    private fun dispatch(it: IHTTPSession): Response {
       return when (EndpointMatcher.match(it.uri)) {
          Endpoint.SAY -> say(it)
-         Endpoint.WAVE -> wave(it)
+         Endpoint.WAVE -> file(it, AudioFormat.WAV)
+         Endpoint.AAC -> file(it, AudioFormat.AAC)
+         Endpoint.MP3 -> file(it, AudioFormat.MP3)
+         Endpoint.M4A -> file(it, AudioFormat.M4A)
+         Endpoint.WMA -> file(it, AudioFormat.WMA)
+         Endpoint.FLAC -> file(it, AudioFormat.FLAC)
          Endpoint.SONOS -> sonos(it)
          Endpoint.SONOS_CACHE -> sonosCache(it)
          Endpoint.GONG -> gong(it)
@@ -103,8 +110,8 @@ class WebServer(
       }
    }
 
-   private fun wave(session: IHTTPSession): Response {
-      if (!preferences.getBoolean(PreferenceKey.ENABLE_WAVE_ENDPOINT, true)) {
+   private fun file(session: IHTTPSession, audioFormat: AudioFormat): Response {
+      if (!preferences.getBoolean(PreferenceKey.ENABLE_FILE_ENDPOINTS, true)) {
          throw WebException(NOT_FOUND)
       }
 
@@ -118,8 +125,8 @@ class WebServer(
 
       val dto = extractBody(session) { BaseDTO(it) }
 
-      val (stream, size) = tts.fetchTTSStream(dto.text, dto.language)
-      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
+      val (stream, size) = tts.fetchTTSStream(dto.text, dto.language, audioFormat)
+      return newFixedLengthResponse(OK, MimeType.forAudioFormat(audioFormat).mimeType, stream, size)
    }
 
    private fun sonos(session: IHTTPSession): Response {
@@ -160,7 +167,7 @@ class WebServer(
 
       val stream = BufferedInputStream(FileInputStream(file))
       val size = file.length()
-      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
+      return newFixedLengthResponse(OK, MimeType.forFile(file).mimeType, stream, size)
    }
 
    private fun gong(session: IHTTPSession): Response {
@@ -183,7 +190,7 @@ class WebServer(
          context.contentResolver.openInputStream(uri) ?: throw TTSException()
       )
 
-      return newFixedLengthResponse(OK, MIME_WAVE, stream, size)
+      return newFixedLengthResponse(OK, MimeType.WAV.mimeType, stream, size)
    }
 
    override fun start() {
@@ -208,7 +215,6 @@ class WebServer(
 
    companion object {
       private const val MIME_JSON = "application/json"
-      private const val MIME_WAVE = "audio/x-wav"
       private const val CONTENT_TYPE = "content-type"
       private val SUCCESS_RESPONSE = response("Request has been completed")
       private val QUEUED_RESPONSE = response("Request has been queued")

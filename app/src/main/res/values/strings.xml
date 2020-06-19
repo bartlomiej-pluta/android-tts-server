@@ -19,8 +19,8 @@
     <string name="preference_port_title">Server port</string>
     <string name="preference_enable_say_endpoint_summary">Allow HTTP clients to use /say endpoint which enables them to say message using builtin speakers or external ones connected to the device</string>
     <string name="preference_enable_say_endpoint_title">Enable /say endpoint</string>
-    <string name="preference_enable_wave_endpoint_summary">Allow HTTP clients to use /wave endpoint which enables them to retrieve TTS message as wave file</string>
-    <string name="preference_enable_wave_endpoint_title">Enable /wave endpoint</string>
+    <string name="preference_enable_file_endpoints_summary">Allow HTTP clients to use file endpoints (/wav, /mp3, /flac etc.) which enables them to retrieve TTS message as audio file</string>
+    <string name="preference_enable_file_endpoints_title">Enable file endpoints</string>
     <string name="preference_enable_sonos_endpoint_summary">Allow HTTP clients to use /sonos endpoint which enables them to send TTS messages directly to Sonos devices</string>
     <string name="preference_enable_sonos_endpoint_title">Enable /sonos endpoint</string>
     <string name="preference_http_debug_summary">Attach the stacktrace to each error HTTP response if available</string>

@@ -12,6 +12,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.core.web.mime.MimeType
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 
@@ -19,7 +20,7 @@ import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var portPreference: IntEditTextPreference
    private lateinit var sayEndpointPreference: SwitchPreference
-   private lateinit var waveEndpointPreference: SwitchPreference
+   private lateinit var fileEndpointPreference: SwitchPreference
    private lateinit var sonosEndpointPreference: SwitchPreference
    private lateinit var httpDebugPreference: SwitchPreference
    private lateinit var enableGongPreference: SwitchPreference
@@ -61,7 +62,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
       portPreference.setOnBindEditTextListener { it.inputType = InputType.TYPE_CLASS_NUMBER }
       httpDebugPreference = findPreference(PreferenceKey.ENABLE_HTTP_DEBUG)!!
       sayEndpointPreference = findPreference(PreferenceKey.ENABLE_SAY_ENDPOINT)!!
-      waveEndpointPreference = findPreference(PreferenceKey.ENABLE_WAVE_ENDPOINT)!!
+      fileEndpointPreference = findPreference(PreferenceKey.ENABLE_FILE_ENDPOINTS)!!
       sonosEndpointPreference = findPreference(PreferenceKey.ENABLE_SONOS_ENDPOINT)!!
       enableGongPreference = findPreference(PreferenceKey.ENABLE_GONG)!!
       enableGongPreference.setOnPreferenceClickListener { preference ->
@@ -90,7 +91,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    private fun openFilePicker(preference: Preference?) {
       if ((preference as SwitchPreference).isChecked) {
          val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            .apply { type = "audio/x-wav" }
+            .apply { type = MimeType.WAV.mimeType }
             .let { Intent.createChooser(it, getString(R.string.preference_gong_picker_prompt)) }
 
          startActivityForResult(intent, PICKFILE_RESULT_CODE)

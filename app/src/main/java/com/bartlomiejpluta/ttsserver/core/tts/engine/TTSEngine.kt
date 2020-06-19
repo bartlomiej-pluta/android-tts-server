@@ -6,12 +6,14 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.speech.tts.TextToSpeech
+import cafe.adriel.androidaudioconverter.model.AudioFormat
 import com.bartlomiejpluta.ttsserver.core.tts.exception.TTSException
 import com.bartlomiejpluta.ttsserver.core.tts.listener.GongListener
 import com.bartlomiejpluta.ttsserver.core.tts.listener.TTSProcessListener
 import com.bartlomiejpluta.ttsserver.core.tts.model.TTSStream
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
+import com.bartlomiejpluta.ttsserver.core.util.AudioConverter
 import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
 import java.io.BufferedInputStream
 import java.io.File
@@ -23,29 +25,41 @@ class TTSEngine(
    private val context: Context,
    private val tts: TextToSpeech,
    private val ttsStatusHolder: TTSStatusHolder,
-   private val preferences: SharedPreferences
+   private val preferences: SharedPreferences,
+   private val audioConverter: AudioConverter
 ) {
    private val messageDigest = MessageDigest.getInstance("SHA-256")
 
    val status: TTSStatus
       get() = ttsStatusHolder.status
 
-   fun createTTSFile(text: String, language: Locale): File {
+   fun createTTSFile(text: String, language: Locale, audioFormat: AudioFormat = AudioFormat.WAV): File {
       val digest = hash(text, language)
-      val filename = "tts_$digest.wav"
-      val file = File(context.cacheDir, filename)
+      val targetFilename = "tts_$digest.${audioFormat.format}"
+      val wavFilename = "tts_$digest.wav"
+      val wavFile = File(context.cacheDir, wavFilename)
+      val targetFile = File(context.cacheDir, targetFilename)
 
-      file.takeIf { it.exists() }?.let { return it }
+      targetFile.takeIf { it.exists() }?.let { return it }
 
       val uuid = UUID.randomUUID().toString()
       val listener = TTSProcessListener(uuid)
       tts.setOnUtteranceProgressListener(listener)
 
       tts.language = language
-      tts.synthesizeToFile(text, null, file, uuid)
+      tts.synthesizeToFile(text, null, wavFile, uuid)
       listener.await()
 
-      return file
+      return convertFile(wavFile, audioFormat)
+   }
+
+   private fun convertFile(file: File, audioFormat: AudioFormat): File {
+      if (audioFormat == AudioFormat.WAV) {
+         return file
+      }
+
+
+      return audioConverter.convert(file, audioFormat).also { file.delete() }
    }
 
    private fun hash(text: String, language: Locale): String {
@@ -54,7 +68,7 @@ class TTSEngine(
       return digest.fold("", { str, it -> str + "%02x".format(it) })
    }
 
-   fun fetchTTSStream(text: String, language: Locale): TTSStream {
+   fun fetchTTSStream(text: String, language: Locale, audioFormat: AudioFormat = AudioFormat.WAV): TTSStream {
       val file = createTempFile("tmp_tts_server", ".wav")
 
       val uuid = UUID.randomUUID().toString()
@@ -65,8 +79,9 @@ class TTSEngine(
       tts.synthesizeToFile(text, null, file, uuid)
       listener.await()
 
-      val stream = BufferedInputStream(FileInputStream(file))
-      val length = file.length()
+      val converted = convertFile(file, audioFormat)
+      val stream = BufferedInputStream(FileInputStream(converted))
+      val length = converted.length()
 
       file.delete()
 

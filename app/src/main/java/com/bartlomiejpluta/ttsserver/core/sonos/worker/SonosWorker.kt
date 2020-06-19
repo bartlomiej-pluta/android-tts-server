@@ -1,6 +1,7 @@
 package com.bartlomiejpluta.ttsserver.core.sonos.worker
 
 import android.content.SharedPreferences
+import cafe.adriel.androidaudioconverter.model.AudioFormat
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.web.dto.SonosDTO
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
@@ -40,7 +41,7 @@ class SonosWorker(
       }
 
    private fun prepareTTSFile(data: SonosDTO): String {
-      val filename = tts.createTTSFile(data.text, data.language).name
+      val filename = tts.createTTSFile(data.text, data.language, AudioFormat.MP3).name
       return "$announcementUrl$filename"
    }
 

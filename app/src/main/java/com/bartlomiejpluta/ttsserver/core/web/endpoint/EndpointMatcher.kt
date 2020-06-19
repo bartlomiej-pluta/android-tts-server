@@ -8,7 +8,7 @@ object EndpointMatcher {
 
    init {
       Endpoint.values().forEach {
-         uriMatcher.addURI("", it.uri, it.id)
+         uriMatcher.addURI("", it.uri, it.ordinal)
       }
    }
 

@@ -58,21 +58,22 @@ POST /say
     get a complete speech-based notification system.
 </p>
 
-<h2>The <code>/wave</code> endpoint</h2>
+<h2>The <code>/{wave,acc,mp3,m4a,wma,flac}</code> endpoint</h2>
 <pre>
-POST /wave
+POST /{wave,acc,mp3,m4a,wma,flac}
 {
     "text": "The text to be spoken",
     "language": "en_US"
 }
 </pre>
-<p><b>Returns:</b> <code>200 OK</code> with wave file (<code>Content-Type: audio/x-wav</code>)</p>
+<p><b>Returns:</b> <code>200 OK</code> with proper audio file</p>
 <p>
-    The <code>/wave</code> endpoint enables you to download a wav file containing speech of the
+    This endpoint enables you to download an audio file file containing speech of the
     provided text. The goal of this endpoint is to provide interface allowing you establishment
     of the connection between the TTS Server and some other kind of already running TTS system,
     which can invoke the HTTP request to your Android device and do something with returned
-    wav file.
+    audio file. Note that all files but wav originates right from the wav file through FFmpeg
+    converter.
 </p>
 
 <h2>The <code>/sonos</code> endpoint</h2>

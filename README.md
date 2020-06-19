@@ -41,21 +41,22 @@ old PC-speakers you are able to connect your device to them via line port and
 get a complete speech-based notification system.
 
 
-## The `/wave` endpoint
+## The `/{wave,acc,mp3,m4a,wma,flac}` endpoint
 ```
-POST /wave
+POST /{wave,acc,mp3,m4a,wma,flac}
 {
 "text": "The text to be spoken",
 "language": "en_US"
 }
 ```
-*Returns:* `200 OK` with wave file (`Content-Type: audio/x-wav`)
+*Returns:* `200 OK` with proper audio file
 
-The `/wave` endpoint enables you to download a wav file containing speech of the
+This endpoint enables you to download an audio file file containing speech of the
 provided text. The goal of this endpoint is to provide interface allowing you establishment
 of the connection between the TTS Server and some other kind of already running TTS system,
 which can invoke the HTTP request to your Android device and do something with returned
-wav file.
+audio file. Note that all files but wav originates right from the wav file through FFmpeg
+converter.
 
 ## The `/sonos` endpoint
 ```
