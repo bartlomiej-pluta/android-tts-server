@@ -1,4 +1,4 @@
-package com.bartlomiejpluta.ttsserver.ui.preference
+package com.bartlomiejpluta.ttsserver.ui.preference.component
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +11,9 @@ class PreferencesActivity : AppCompatActivity() {
       setContentView(R.layout.activity_preferences)
       supportFragmentManager
          .beginTransaction()
-         .replace(R.id.preferences, PreferencesFragment())
+         .replace(R.id.preferences,
+            PreferencesFragment()
+         )
          .commit()
       supportActionBar?.setDisplayHomeAsUpEnabled(true)
    }

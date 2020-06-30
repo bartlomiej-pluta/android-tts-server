@@ -7,7 +7,7 @@ import com.bartlomiejpluta.ttsserver.core.web.dto.SonosDTO
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
 import com.vmichalak.sonoscontroller.Snapshot
 import com.vmichalak.sonoscontroller.SonosDevice
 import com.vmichalak.sonoscontroller.SonosDiscovery

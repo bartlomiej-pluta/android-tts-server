@@ -14,7 +14,7 @@ import com.bartlomiejpluta.ttsserver.core.tts.model.TTSStream
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
 import com.bartlomiejpluta.ttsserver.core.util.AudioConverter
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream

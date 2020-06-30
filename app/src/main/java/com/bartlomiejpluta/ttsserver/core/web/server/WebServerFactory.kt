@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
 
 class WebServerFactory(
    private val preferences: SharedPreferences,

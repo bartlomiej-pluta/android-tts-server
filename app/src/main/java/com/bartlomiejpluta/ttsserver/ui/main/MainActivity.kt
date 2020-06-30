@@ -14,7 +14,7 @@ import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.help.HelpActivity
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferencesActivity
+import com.bartlomiejpluta.ttsserver.ui.preference.component.PreferencesActivity
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 

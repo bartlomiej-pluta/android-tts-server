@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.WIFI_SERVICE
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
 import java.net.InetAddress
 
 

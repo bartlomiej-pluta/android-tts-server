@@ -30,7 +30,7 @@
             android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
 
         <activity
-            android:name="com.bartlomiejpluta.ttsserver.ui.preference.PreferencesActivity"
+            android:name="com.bartlomiejpluta.ttsserver.ui.preference.component.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
 

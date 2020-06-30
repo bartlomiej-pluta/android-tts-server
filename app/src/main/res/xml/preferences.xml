@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/preference_category_server" app:iconSpaceReserved="false">
-        <com.bartlomiejpluta.ttsserver.ui.preference.IntEditTextPreference
+        <com.bartlomiejpluta.ttsserver.ui.preference.custom.IntEditTextPreference
             android:defaultValue="8080"
             android:inputType="number"
             android:key="preference_port"
@@ -54,7 +54,21 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/preference_category_speakers" app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:key="preference_enable_speakers_silence_scheduler"
+            android:summary="@string/preference_enable_speakers_silence_scheduler_summary"
+            app:title="@string/preference_enable_speakers_silence_scheduler_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/preference_category_sonos" app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:key="preference_enable_sonos_silence_scheduler"
+            android:summary="@string/preference_enable_sonos_silence_scheduler_summary"
+            app:title="@string/preference_enable_sonos_silence_scheduler_title"
+            app:iconSpaceReserved="false" />
+
         <Preference
             android:key="preference_invalidate_sonos_cache"
             android:summary="@string/preference_invalidate_sonos_cache_summary"

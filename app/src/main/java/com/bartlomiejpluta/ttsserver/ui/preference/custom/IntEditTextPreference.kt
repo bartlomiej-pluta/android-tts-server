@@ -1,4 +1,4 @@
-package com.bartlomiejpluta.ttsserver.ui.preference
+package com.bartlomiejpluta.ttsserver.ui.preference.custom
 
 import android.content.Context
 import android.util.AttributeSet

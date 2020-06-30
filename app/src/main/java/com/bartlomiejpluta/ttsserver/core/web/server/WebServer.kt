@@ -18,13 +18,15 @@ import com.bartlomiejpluta.ttsserver.core.web.exception.WebException
 import com.bartlomiejpluta.ttsserver.core.web.mime.MimeType
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
-import com.bartlomiejpluta.ttsserver.ui.preference.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.model.TimeRange
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
 import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 
 
 class WebServer(
@@ -34,6 +36,20 @@ class WebServer(
    private val tts: TTSEngine,
    private val sonos: SonosQueue
 ) : NanoHTTPD(port) {
+   private val speakersSilenceSchedulerEnabled: Boolean
+      get() = preferences.getBoolean(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER, false)
+
+   private val sonosSilenceSchedulerEnabled: Boolean
+      get() = preferences.getBoolean(PreferenceKey.ENABLE_SONOS_SILENCE_SCHEDULER, false)
+
+   private val speakersSilenceSchedule: TimeRange
+      get() = preferences.getString(PreferenceKey.SPEAKERS_SILENCE_SCHEDULE, "")!!
+         .let { TimeRange.parse(it) }
+
+   private val sonosSilenceSchedule: TimeRange
+      get() = preferences.getString(PreferenceKey.SONOS_SILENCE_SCHEDULE, "")!!
+         .let { TimeRange.parse(it) }
+
    override fun serve(session: IHTTPSession?): Response {
       try {
          assertThatTTSIsReady()
@@ -97,6 +113,10 @@ class WebServer(
          throw WebException(BAD_REQUEST, "Only JSON data is accepted")
       }
 
+      if (speakersSilenceSchedulerEnabled && speakersSilenceSchedule.inRange(Calendar.getInstance())) {
+         return newFixedLengthResponse(NO_CONTENT, MIME_JSON, "")
+      }
+
       val dto = extractBody(session) { BaseDTO(it) }
 
       tts.performTTS(dto.text, dto.language)
@@ -140,6 +160,10 @@ class WebServer(
 
       if (session.headers[CONTENT_TYPE]?.let { it != MIME_JSON } != false) {
          throw WebException(BAD_REQUEST, "Only JSON data is accepted")
+      }
+
+      if (sonosSilenceSchedulerEnabled && sonosSilenceSchedule.inRange(Calendar.getInstance())) {
+         return newFixedLengthResponse(NO_CONTENT, MIME_JSON, "")
       }
 
       val dto = extractBody(session) { SonosDTO(it) }

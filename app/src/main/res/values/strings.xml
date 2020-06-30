@@ -30,11 +30,16 @@
     <string name="preference_enable_gong_title">Enable gong</string>
     <string name="preference_tts_summary">Go to platform\'s TTS engine settings and adjust its parameters</string>
     <string name="preference_tts_title">TTS engine settings</string>
+    <string name="preference_enable_speakers_silence_scheduler_summary">Determine a time range when /say endpoint should be disabled</string>
+    <string name="preference_enable_speakers_silence_scheduler_title">Enable silence scheduler</string>
+    <string name="preference_enable_sonos_silence_scheduler_summary">Determine a time range when /sonos endpoint should be disabled</string>
+    <string name="preference_enable_sonos_silence_scheduler_title">Enable silence scheduler</string>
     <string name="preference_invalidate_sonos_cache_summary">Clear application cache directory from already generated Sonos TTS data for given sentences. You typically want to do it when you change the TTS engine\'s voice settings.</string>
     <string name="preference_invalidate_sonos_cache_title">Invalidate Sonos cache</string>
     <string name="preference_category_server">Server</string>
     <string name="preference_category_features">Features</string>
     <string name="preference_category_tts">TTS engine</string>
+    <string name="preference_category_speakers">Speakers</string>
     <string name="preference_category_sonos">Sonos</string>
     <string name="preference_invalidate_sonos_cache_toast">Sonos cache has been invalidated</string>
 

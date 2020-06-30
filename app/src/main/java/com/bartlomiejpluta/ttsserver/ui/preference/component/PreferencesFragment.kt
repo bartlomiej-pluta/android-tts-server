@@ -1,5 +1,6 @@
-package com.bartlomiejpluta.ttsserver.ui.preference
+package com.bartlomiejpluta.ttsserver.ui.preference.component
 
+import android.app.TimePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,9 @@ import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.web.mime.MimeType
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
+import com.bartlomiejpluta.ttsserver.ui.preference.model.TimeRange
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.custom.IntEditTextPreference
 
 
 class PreferencesFragment : PreferenceFragmentCompat() {
@@ -25,6 +29,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    private lateinit var httpDebugPreference: SwitchPreference
    private lateinit var enableGongPreference: SwitchPreference
    private lateinit var ttsEnginePreference: Preference
+   private lateinit var enableSonosSilenceScheduler: SwitchPreference
+   private lateinit var enableSpeakersSilenceScheduler: SwitchPreference
    private lateinit var clearSonosCachePreference: Preference
 
    private val receiver = object : BroadcastReceiver() {
@@ -75,6 +81,82 @@ class PreferencesFragment : PreferenceFragmentCompat() {
          startActivity(Intent(ANDROID_TTS_SETTINGS))
          true
       }
+      enableSpeakersSilenceScheduler = findPreference(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER)!!
+      enableSpeakersSilenceScheduler.setOnPreferenceClickListener { preference ->
+         if(!enableSpeakersSilenceScheduler.isChecked) {
+            return@setOnPreferenceClickListener true
+         }
+         enableSpeakersSilenceScheduler.isChecked = false
+
+         val schedule = preference
+            .sharedPreferences
+            .getString(
+               PreferenceKey.SPEAKERS_SILENCE_SCHEDULE,
+               DEFAULT_SCHEDULE
+            )!!
+            .let {
+               TimeRange.parse(
+                  it
+               )
+            }
+
+         TimePickerDialog(context, { _, newBeginHour, newBeginMinute ->
+            TimePickerDialog(context, { _, newEndHour, newEndMinute ->
+               preference.sharedPreferences.edit()?.let { editor ->
+                  val newSchedule =
+                     TimeRange(
+                        newBeginHour,
+                        newBeginMinute,
+                        newEndHour,
+                        newEndMinute
+                     )
+                  editor.putString(PreferenceKey.SPEAKERS_SILENCE_SCHEDULE, newSchedule.toString())
+                  editor.apply()
+                  enableSpeakersSilenceScheduler.isChecked = true
+               }
+            }, schedule.endHour, schedule.endMinute, true).show()
+         }, schedule.beginHour, schedule.beginMinute, true).show()
+
+         true
+      }
+      enableSonosSilenceScheduler = findPreference(PreferenceKey.ENABLE_SONOS_SILENCE_SCHEDULER)!!
+      enableSonosSilenceScheduler.setOnPreferenceClickListener { preference ->
+         if(!enableSonosSilenceScheduler.isChecked) {
+            return@setOnPreferenceClickListener true
+         }
+         enableSonosSilenceScheduler.isChecked = false
+
+         val schedule = preference
+            .sharedPreferences
+            .getString(
+               PreferenceKey.SONOS_SILENCE_SCHEDULE,
+               DEFAULT_SCHEDULE
+            )!!
+            .let {
+               TimeRange.parse(
+                  it
+               )
+            }
+
+         TimePickerDialog(context, { _, newBeginHour, newBeginMinute ->
+            TimePickerDialog(context, { _, newEndHour, newEndMinute ->
+               preference.sharedPreferences.edit()?.let { editor ->
+                  val newSchedule =
+                     TimeRange(
+                        newBeginHour,
+                        newBeginMinute,
+                        newEndHour,
+                        newEndMinute
+                     )
+                  editor.putString(PreferenceKey.SONOS_SILENCE_SCHEDULE, newSchedule.toString())
+                  editor.apply()
+                  enableSonosSilenceScheduler.isChecked = true
+               }
+            }, schedule.endHour, schedule.endMinute, true).show()
+         }, schedule.beginHour, schedule.beginMinute, true).show()
+
+         true
+      }
       clearSonosCachePreference = findPreference(PreferenceKey.INVALIDATE_SONOS_CACHE)!!
       clearSonosCachePreference.setOnPreferenceClickListener {
          context?.cacheDir?.listFiles()?.forEach { it.delete() }
@@ -94,7 +176,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             .apply { type = MimeType.WAV.mimeType }
             .let { Intent.createChooser(it, getString(R.string.preference_gong_picker_prompt)) }
 
-         startActivityForResult(intent, PICKFILE_RESULT_CODE)
+         startActivityForResult(intent,
+            PICKFILE_RESULT_CODE
+         )
       }
    }
 
@@ -118,5 +202,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
    companion object {
       private const val ANDROID_TTS_SETTINGS = "com.android.settings.TTS_SETTINGS"
       private const val PICKFILE_RESULT_CODE = 1
+      private val DEFAULT_SCHEDULE = "22:00-07:00"
    }
 }
