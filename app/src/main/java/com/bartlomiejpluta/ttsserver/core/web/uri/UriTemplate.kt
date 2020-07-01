@@ -28,10 +28,9 @@ class UriTemplate private constructor(uri: String) {
                variables.add(variableBuilder.toString())
             }
 
-            isVariable -> char.takeIf { it.isLetter() } ?: error(
-               "Only letters are allowed as template",
-               index + 1
-            ).let { variableBuilder?.append(it) }
+            isVariable -> char.takeIf { it.isLetter() }
+               ?.let { variableBuilder?.append(it) }
+               ?: error("Only letters are allowed as template", index + 1)
 
             else -> patternBuilder.append(char)
          }

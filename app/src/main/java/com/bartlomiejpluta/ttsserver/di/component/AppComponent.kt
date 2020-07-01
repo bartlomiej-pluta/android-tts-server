@@ -3,6 +3,7 @@ package com.bartlomiejpluta.ttsserver.di.component
 import android.content.Context
 import com.bartlomiejpluta.ttsserver.TTSApplication
 import com.bartlomiejpluta.ttsserver.di.module.AndroidModule
+import com.bartlomiejpluta.ttsserver.di.module.LuaModule
 import com.bartlomiejpluta.ttsserver.di.module.TTSModule
 import dagger.BindsInstance
 import dagger.Component
@@ -11,7 +12,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AndroidSupportInjectionModule::class, AndroidModule::class, TTSModule::class])
+@Component(modules = [AndroidSupportInjectionModule::class, AndroidModule::class, TTSModule::class, LuaModule::class])
 interface AppComponent : AndroidInjector<TTSApplication> {
 
    @Component.Builder

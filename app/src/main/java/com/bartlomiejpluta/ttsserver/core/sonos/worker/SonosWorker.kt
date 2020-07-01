@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import cafe.adriel.androidaudioconverter.model.AudioFormat
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.web.dto.SonosDTO
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpointx
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
@@ -20,8 +20,8 @@ class SonosWorker(
    private val preferences: SharedPreferences,
    private val queue: BlockingQueue<SonosDTO>
 ) : Runnable {
-   private val gongUrl: String get() = address + Endpoint.GONG.trimmedUri
-   private val announcementUrl: String get() = address + Endpoint.SONOS_CACHE.trimmedUri
+   private val gongUrl: String get() = address + Endpointx.GONG.trimmedUri
+   private val announcementUrl: String get() = address + Endpointx.SONOS_CACHE.trimmedUri
    private var snapshot: Snapshot? = null
 
    override fun run() = try {

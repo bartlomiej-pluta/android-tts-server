@@ -7,11 +7,11 @@ object EndpointMatcher {
    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
    init {
-      Endpoint.values().forEach {
+      Endpointx.values().forEach {
          uriMatcher.addURI("", it.uri, it.ordinal)
       }
    }
 
    fun match(uri: String) =
-      Endpoint.of(uriMatcher.match(Uri.parse("content://$uri")))
+      Endpointx.of(uriMatcher.match(Uri.parse("content://$uri")))
 }

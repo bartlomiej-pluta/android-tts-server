@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.speech.tts.TextToSpeech
 import androidx.preference.PreferenceManager
+import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
@@ -43,12 +44,14 @@ class TTSModule {
       preferences: SharedPreferences,
       context: Context,
       tts: TTSEngine,
-      sonos: SonosQueue
+      sonos: SonosQueue,
+      endpointLoader: EndpointLoader
    ) = WebServerFactory(
       preferences,
       context,
       tts,
-      sonos
+      sonos,
+      endpointLoader
    )
 
    @Provides
