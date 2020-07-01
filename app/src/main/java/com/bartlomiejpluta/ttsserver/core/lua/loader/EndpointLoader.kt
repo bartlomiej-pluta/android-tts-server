@@ -2,7 +2,7 @@ package com.bartlomiejpluta.ttsserver.core.lua.loader
 
 import android.content.Context
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.EndpointType
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD.Method
@@ -14,7 +14,7 @@ import java.lang.IllegalArgumentException
 
 class EndpointLoader(private val context: Context, private val sandboxFactory: SandboxFactory) {
 
-   fun loadEndpoints(): List<Endpoint> {
+   fun loadEndpoints(): List<DefaultEndpoint> {
       val scripts = context.getExternalFilesDir("Endpoints")?.listFiles() ?: emptyArray()
 
       return scripts
@@ -23,7 +23,7 @@ class EndpointLoader(private val context: Context, private val sandboxFactory: S
          .map { createEndpoint(it) }
    }
 
-   private fun createEndpoint(luaTable: LuaTable) = Endpoint(
+   private fun createEndpoint(luaTable: LuaTable) = DefaultEndpoint(
       uri = parseUri(luaTable),
       method = parseMethod(luaTable),
       type = parseType(luaTable),

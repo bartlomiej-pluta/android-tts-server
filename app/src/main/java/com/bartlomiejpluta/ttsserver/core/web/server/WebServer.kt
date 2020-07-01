@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
-import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.exception.WebException
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
@@ -26,7 +24,7 @@ class WebServer(
    private val preferences: SharedPreferences,
    private val tts: TTSEngine,
    private val sonos: SonosQueue,
-   private val endpoints: List<Endpoint>
+   private val endpoints: List<DefaultEndpoint>
 ) : NanoHTTPD(port) {
    private val speakersSilenceSchedulerEnabled: Boolean
       get() = preferences.getBoolean(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER, false)
