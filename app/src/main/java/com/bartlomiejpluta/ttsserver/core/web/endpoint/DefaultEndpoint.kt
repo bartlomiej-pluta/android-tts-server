@@ -1,5 +1,6 @@
 package com.bartlomiejpluta.ttsserver.core.web.endpoint
 
+import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD.*
 import org.luaj.vm2.LuaClosure

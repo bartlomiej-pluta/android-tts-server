@@ -1,4 +1,4 @@
-package com.bartlomiejpluta.ttsserver.core.web.endpoint
+package com.bartlomiejpluta.ttsserver.core.web.dto
 
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD
@@ -35,6 +35,9 @@ class Request private constructor(
 
    companion object {
       fun of(request: NanoHTTPD.IHTTPSession, matchingResult: UriTemplate.MatchingResult) =
-         Request(request, matchingResult)
+         Request(
+            request,
+            matchingResult
+         )
    }
 }

@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.speech.tts.TextToSpeech
 import androidx.preference.PreferenceManager
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
-import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
 import com.bartlomiejpluta.ttsserver.core.util.AudioConverter
@@ -44,13 +43,11 @@ class TTSModule {
       preferences: SharedPreferences,
       context: Context,
       tts: TTSEngine,
-      sonos: SonosQueue,
       endpointLoader: EndpointLoader
    ) = WebServerFactory(
       preferences,
       context,
       tts,
-      sonos,
       endpointLoader
    )
 
@@ -66,11 +63,6 @@ class TTSModule {
    @Provides
    @Singleton
    fun adudioConverter(context: Context) = AudioConverter(context)
-
-   @Provides
-   @Singleton
-   fun sonosQueue(tts: TTSEngine, preferences: SharedPreferences, networkUtil: NetworkUtil) =
-      SonosQueue(tts, preferences, networkUtil)
 
    @Provides
    @Singleton

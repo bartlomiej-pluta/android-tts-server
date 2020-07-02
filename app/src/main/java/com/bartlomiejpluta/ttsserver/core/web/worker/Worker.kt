@@ -1,5 +1,6 @@
-package com.bartlomiejpluta.ttsserver.core.web.endpoint
+package com.bartlomiejpluta.ttsserver.core.web.worker
 
+import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import org.luaj.vm2.LuaClosure
@@ -20,9 +21,7 @@ class Worker(
       Thread.currentThread().interrupt()
    }
 
-   private fun consume(request: Request) {
-      consumer.call(request.luaTable, QueueSizeFunction(queue))
-   }
+   private fun consume(request: Request) = consumer.call(request.luaTable, QueueSizeFunction(queue))
 
    class QueueSizeFunction(private val queue: BlockingQueue<Request>) : ZeroArgFunction() {
       override fun call(): LuaInteger = LuaValue.valueOf(queue.size)

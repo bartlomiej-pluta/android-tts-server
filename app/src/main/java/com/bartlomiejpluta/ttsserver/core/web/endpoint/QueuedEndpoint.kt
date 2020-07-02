@@ -1,6 +1,8 @@
 package com.bartlomiejpluta.ttsserver.core.web.endpoint
 
+import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
+import com.bartlomiejpluta.ttsserver.core.web.worker.Worker
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.newFixedLengthResponse
 import org.luaj.vm2.LuaClosure
@@ -13,7 +15,12 @@ class QueuedEndpoint(
    consumer: LuaClosure
 ) : Endpoint {
    private val queue = LinkedBlockingQueue<Request>()
-   private val worker = Thread(Worker(queue, consumer)).also { it.name = uri.template }
+   private val worker = Thread(
+      Worker(
+         queue,
+         consumer
+      )
+   ).also { it.name = uri.template }
 
    override fun hit(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response? {
       if (session.method != method) {
