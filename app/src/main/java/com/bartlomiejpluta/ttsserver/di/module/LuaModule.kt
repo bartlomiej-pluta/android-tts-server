@@ -4,6 +4,7 @@ import android.content.Context
 import com.bartlomiejpluta.ttsserver.core.lua.lib.HTTPLibrary
 import com.bartlomiejpluta.ttsserver.core.lua.lib.SonosLibrary
 import com.bartlomiejpluta.ttsserver.core.lua.lib.TTSLibrary
+import com.bartlomiejpluta.ttsserver.core.lua.lib.UtilLibrary
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
@@ -21,8 +22,17 @@ class LuaModule {
 
    @Provides
    @Singleton
-   fun sandboxFactory(httpLibrary: HTTPLibrary, ttsLibrary: TTSLibrary, sonosLibrary: SonosLibrary) =
-      SandboxFactory(httpLibrary, ttsLibrary, sonosLibrary)
+   fun sandboxFactory(
+      utilLibrary: UtilLibrary,
+      httpLibrary: HTTPLibrary,
+      ttsLibrary: TTSLibrary,
+      sonosLibrary: SonosLibrary
+   ) =
+      SandboxFactory(utilLibrary, httpLibrary, ttsLibrary, sonosLibrary)
+
+   @Provides
+   @Singleton
+   fun extraLibrary() = UtilLibrary()
 
    @Provides
    @Singleton

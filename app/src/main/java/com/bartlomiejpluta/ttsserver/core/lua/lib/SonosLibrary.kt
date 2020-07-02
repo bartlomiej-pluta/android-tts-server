@@ -9,19 +9,6 @@ import org.luaj.vm2.lib.TwoArgFunction
 import org.luaj.vm2.lib.ZeroArgFunction
 import org.luaj.vm2.lib.jse.CoerceJavaToLua
 
-class OfFunction : OneArgFunction() {
-   override fun call(ip: LuaValue): LuaValue =
-      CoerceJavaToLua.coerce(SonosDevice(ip.checkjstring()))
-}
-
-class DiscoverFunction : ZeroArgFunction() {
-   override fun call(): LuaTable = LuaValue.tableOf().also { devices ->
-      SonosDiscovery.discover()
-         .map { CoerceJavaToLua.coerce(it) }
-         .forEachIndexed { i, device -> devices.set(i + 1, device) }
-   }
-}
-
 class SonosLibrary : TwoArgFunction() {
 
    override fun call(modname: LuaValue, env: LuaValue): LuaValue {
@@ -33,5 +20,18 @@ class SonosLibrary : TwoArgFunction() {
       env.set("sonos", sonos)
 
       return LuaValue.NIL
+   }
+
+   class OfFunction : OneArgFunction() {
+      override fun call(ip: LuaValue): LuaValue =
+         CoerceJavaToLua.coerce(SonosDevice(ip.checkjstring()))
+   }
+
+   class DiscoverFunction : ZeroArgFunction() {
+      override fun call(): LuaTable = LuaValue.tableOf().also { devices ->
+         SonosDiscovery.discover()
+            .map { CoerceJavaToLua.coerce(it) }
+            .forEachIndexed { i, device -> devices.set(i + 1, device) }
+      }
    }
 }
