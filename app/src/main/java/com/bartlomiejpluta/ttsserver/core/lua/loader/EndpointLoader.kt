@@ -75,7 +75,8 @@ class EndpointLoader(
 
    private fun parseEnabled(luaTable: LuaTable) = luaTable.get("enabled").optboolean(true)
 
-   private fun parseAccepts(luaTable: LuaTable) = luaTable.get("accepts").optjstring("text/plain")
+   private fun parseAccepts(luaTable: LuaTable) = luaTable.get("accepts").optjstring("")
+      .takeIf { it.isNotBlank() }
 
    private fun parseQueued(luaTable: LuaTable) = luaTable.get("queued").optboolean(false)
 

@@ -9,11 +9,11 @@ import org.luaj.vm2.LuaClosure
 import java.util.concurrent.LinkedBlockingQueue
 
 class QueuedEndpoint(
-   private val uri: UriTemplate,
-   private val accepts: String,
-   private val method: NanoHTTPD.Method,
+   uri: UriTemplate,
+   accepts: String?,
+   method: NanoHTTPD.Method,
    consumer: LuaClosure
-) : Endpoint {
+) : AbstractEndpoint(uri, accepts, method) {
    private val queue = LinkedBlockingQueue<Request>()
    private val worker = Thread(
       Worker(
@@ -22,32 +22,11 @@ class QueuedEndpoint(
       )
    ).also { it.name = uri.template }
 
-   override fun hit(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response? {
-      if (session.method != method) {
-         return null
-      }
 
-      if ((session.headers["content-type"]?.let { it != accepts } != false)) {
-         return null
-      }
 
-      val matchingResult = uri.match(session.uri)
-      if (!matchingResult.matched) {
-         return null
-      }
-
-      val request = Request.of(session, matchingResult)
-
+   override fun safeHit(request: Request): NanoHTTPD.Response? {
       queue.add(request)
-
       return newFixedLengthResponse(NanoHTTPD.Response.Status.ACCEPTED, "text/plain", "")
-   }
-
-   private fun extractBody(session: NanoHTTPD.IHTTPSession): String {
-      return mutableMapOf<String, String>().let {
-         session.parseBody(it)
-         it["postData"] ?: ""
-      }
    }
 
    fun runWorker() = worker.start()

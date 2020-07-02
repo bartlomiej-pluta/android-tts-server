@@ -3,46 +3,24 @@ package com.bartlomiejpluta.ttsserver.core.web.endpoint
 import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD.*
-import org.luaj.vm2.LuaClosure
-import org.luaj.vm2.LuaNil
-import org.luaj.vm2.LuaTable
-import org.luaj.vm2.LuaValue
+import org.luaj.vm2.*
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 
 class DefaultEndpoint(
-   private val uri: UriTemplate,
-   private val accepts: String,
-   private val method: Method,
+   uri: UriTemplate,
+   accepts: String?,
+   method: Method,
    private val consumer: LuaClosure
-) : Endpoint {
+) : AbstractEndpoint(uri, accepts, method) {
 
-   override fun hit(session: IHTTPSession): Response? {
-      if (session.method != method) {
-         return null
-      }
+   override fun safeHit(request: Request) = request.luaTable
+      .let { consumer.call(it) }
+      .checktable()
+      .let { parseResponse(it) }
 
-      if ((session.headers["content-type"]?.let { it != accepts } != false)) {
-         return null
-      }
-
-      val matchingResult = uri.match(session.uri)
-      if (!matchingResult.matched) {
-         return null
-      }
-
-      val request = Request.of(session, matchingResult)
-
-      val response = consumer.call(request.luaTable).checktable()
-      return parseResponse(response)
-   }
-
-   private fun parseResponse(response: LuaValue) = response
-      .let {
-         it as? LuaTable
-            ?: throw IllegalArgumentException("Invalid type for response - expected table")
-      }
+   private fun parseResponse(response: LuaValue) = response.checktable()
       .let { provideResponse(it) }
 
 
@@ -59,7 +37,7 @@ class DefaultEndpoint(
    )
 
    private fun getFileResponse(response: LuaTable): Response? {
-      val file = File(response.get("file").checkstring().tojstring())
+      val file = File(response.get("file").checkjstring())
       val stream = BufferedInputStream(FileInputStream(file))
       val length = file.length()
       return newFixedLengthResponse(
@@ -71,16 +49,16 @@ class DefaultEndpoint(
    }
 
    private fun getStatus(response: LuaTable): Response.Status {
-      val status = response.get("status").checkint()
+      val status = response.get("status").optint(Response.Status.OK.requestStatus)
       return Response.Status
          .values()
          .firstOrNull { it.requestStatus == status }
-         ?: throw IllegalArgumentException("Unsupported status: $status")
+         ?: throw LuaError("Unsupported status: $status")
    }
 
-   private fun getMimeType(response: LuaTable) = response.get("mime").checkstring().tojstring()
+   private fun getMimeType(response: LuaTable) = response.get("mime").optjstring("text/plain")
 
-   private fun getData(response: LuaTable) = response.get("data").checkstring().tojstring()
+   private fun getData(response: LuaTable) = response.get("data").checkjstring()
 
    override fun toString() = "D[${uri.template}]"
 }
