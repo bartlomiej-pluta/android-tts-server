@@ -20,7 +20,7 @@ class ForegroundNotificationFactory(
       get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
    private val notificationContent: String
-      get() = context.getString(R.string.service_notification_text, networkUtil.serverAddress)
+      get() = context.getString(R.string.service_notification_text, networkUtil.url)
 
    fun createForegroundNotification(): Notification {
       createNotificationChannel()

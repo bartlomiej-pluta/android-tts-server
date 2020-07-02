@@ -1,13 +1,11 @@
 package com.bartlomiejpluta.ttsserver.di.module
 
 import android.content.Context
-import com.bartlomiejpluta.ttsserver.core.lua.lib.HTTPLibrary
-import com.bartlomiejpluta.ttsserver.core.lua.lib.SonosLibrary
-import com.bartlomiejpluta.ttsserver.core.lua.lib.TTSLibrary
-import com.bartlomiejpluta.ttsserver.core.lua.lib.UtilLibrary
+import com.bartlomiejpluta.ttsserver.core.lua.lib.*
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
+import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -24,15 +22,20 @@ class LuaModule {
    @Singleton
    fun sandboxFactory(
       utilLibrary: UtilLibrary,
+      serverLibrary: ServerLibrary,
       httpLibrary: HTTPLibrary,
       ttsLibrary: TTSLibrary,
       sonosLibrary: SonosLibrary
    ) =
-      SandboxFactory(utilLibrary, httpLibrary, ttsLibrary, sonosLibrary)
+      SandboxFactory(utilLibrary, serverLibrary, httpLibrary, ttsLibrary, sonosLibrary)
 
    @Provides
    @Singleton
-   fun extraLibrary() = UtilLibrary()
+   fun utilLibrary() = UtilLibrary()
+
+   @Provides
+   @Singleton
+   fun serverLibrary(networkUtil: NetworkUtil) = ServerLibrary(networkUtil)
 
    @Provides
    @Singleton

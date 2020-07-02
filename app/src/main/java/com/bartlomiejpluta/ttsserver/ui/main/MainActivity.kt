@@ -80,7 +80,7 @@ class MainActivity : DaggerAppCompatActivity() {
          ServiceState.RUNNING -> {
             serverControlButton.setImageResource(R.drawable.ic_power_on)
             serverStatus.text =
-               getString(R.string.main_activity_server_status_up, networkUtil.serverAddress)
+               getString(R.string.main_activity_server_status_up, networkUtil.url)
             promptText.text = getString(R.string.main_activity_prompt_to_stop)
          }
       }

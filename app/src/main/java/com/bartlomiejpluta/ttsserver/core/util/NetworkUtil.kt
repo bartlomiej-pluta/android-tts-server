@@ -9,13 +9,15 @@ import java.net.InetAddress
 
 
 class NetworkUtil(private val context: Context, private val preferences: SharedPreferences) {
-   val serverAddress: String
-      get() = "http://${getIpAddress()}:${preferences.getInt(PreferenceKey.PORT, 8000)}"
+   val port: Int
+      get() = preferences.getInt(PreferenceKey.PORT, 8000)
 
-   fun getIpAddress(): String {
-      return (context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager).let {
-         inetAddress(it.dhcpInfo.ipAddress).toString().substring(1)
-      }
+   val url: String
+      get() = "http://$address:$port"
+
+   val address: String
+      get() = (context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager).let {
+      inetAddress(it.dhcpInfo.ipAddress).toString().substring(1)
    }
 
    private fun inetAddress(hostAddress: Int) = byteArrayOf(
