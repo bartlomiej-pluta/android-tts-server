@@ -1,6 +1,5 @@
 package com.bartlomiejpluta.ttsserver.core.lua.lib
 
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.ResponseType
 import fi.iki.elonen.NanoHTTPD
 import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.TwoArgFunction

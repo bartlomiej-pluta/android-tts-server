@@ -3,6 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.web.endpoint
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD.*
 import org.luaj.vm2.LuaClosure
+import org.luaj.vm2.LuaNil
 import org.luaj.vm2.LuaTable
 import org.luaj.vm2.LuaValue
 import java.io.BufferedInputStream
@@ -44,12 +45,11 @@ class DefaultEndpoint(
       .let { provideResponse(it) }
 
 
-   private fun provideResponse(response: LuaTable) =
-      when (response.get("type").checkjstring()) {
-         ResponseType.TEXT.name -> getTextResponse(response)
-         ResponseType.FILE.name -> getFileResponse(response)
-         else -> throw IllegalArgumentException("Unknown value for type in response")
-      }
+   private fun provideResponse(response: LuaTable) = when {
+      response.get("data") !is LuaNil -> getTextResponse(response)
+      response.get("file") !is LuaNil -> getFileResponse(response)
+      else -> throw IllegalArgumentException("Provide 'data' or 'file' in response table")
+   }
 
    private fun getTextResponse(response: LuaTable) = newFixedLengthResponse(
       getStatus(response),
