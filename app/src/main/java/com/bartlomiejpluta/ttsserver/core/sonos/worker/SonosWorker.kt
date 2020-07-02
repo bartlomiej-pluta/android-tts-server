@@ -49,6 +49,7 @@ class SonosWorker(
       device.stop()
       device.volume = data.volume
 
+
       if (preferences.getBoolean(PreferenceKey.ENABLE_GONG, false)) {
          playUri(device, gongUrl)
       }

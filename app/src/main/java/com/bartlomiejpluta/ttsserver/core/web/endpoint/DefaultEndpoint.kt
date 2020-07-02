@@ -30,9 +30,9 @@ class DefaultEndpoint(
          return null
       }
 
-      val request = Request.of(extractBody(session), matchingResult.variables)
+      val request = Request.of(session, matchingResult)
 
-      val response = consumer.call(request.body, request.params).checktable()
+      val response = consumer.call(request.luaTable).checktable()
       return parseResponse(response)
    }
 
@@ -81,10 +81,4 @@ class DefaultEndpoint(
 
    private fun getData(response: LuaTable) = response.get("data").checkstring().tojstring()
 
-   private fun extractBody(session: IHTTPSession): String {
-      return mutableMapOf<String, String>().let {
-         session.parseBody(it)
-         it["postData"] ?: ""
-      }
-   }
 }

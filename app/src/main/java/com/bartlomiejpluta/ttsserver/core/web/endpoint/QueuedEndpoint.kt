@@ -1,14 +1,10 @@
 package com.bartlomiejpluta.ttsserver.core.web.endpoint
 
-import com.bartlomiejpluta.ttsserver.core.sonos.worker.SonosWorker
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.newFixedLengthResponse
 import org.luaj.vm2.LuaClosure
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
 
 class QueuedEndpoint(
    private val uri: UriTemplate,
@@ -33,7 +29,7 @@ class QueuedEndpoint(
          return null
       }
 
-      val request = Request.of(extractBody(session), matchingResult.variables)
+      val request = Request.of(session, matchingResult)
 
       queue.add(request)
 
