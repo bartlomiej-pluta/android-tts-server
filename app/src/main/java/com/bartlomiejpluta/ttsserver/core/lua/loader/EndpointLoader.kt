@@ -11,7 +11,6 @@ import org.luaj.vm2.LuaClosure
 import org.luaj.vm2.LuaNil
 import org.luaj.vm2.LuaString
 import org.luaj.vm2.LuaTable
-import java.util.concurrent.ExecutorService
 
 class EndpointLoader(
    private val context: Context,
@@ -27,6 +26,7 @@ class EndpointLoader(
             it as? LuaTable
                ?: throw IllegalArgumentException("Expected single table to be returned")
          }
+         .filter { parseEnabled(it) }
          .map { createEndpoint(it) }
    }
 
@@ -62,6 +62,11 @@ class EndpointLoader(
          it as? LuaClosure ?: throw IllegalArgumentException("'consumer' must be a function'")
       }
       ?: throw IllegalArgumentException("'consumer' field is required")
+
+   private fun parseEnabled(luaTable: LuaTable) = luaTable.get("enabled")
+      .takeIf { it !is LuaNil }
+      ?.checkboolean()
+      ?: true
 
    private fun parseAccepts(luaTable: LuaTable) = luaTable.get("accepts")
       .takeIf { it !is LuaNil }

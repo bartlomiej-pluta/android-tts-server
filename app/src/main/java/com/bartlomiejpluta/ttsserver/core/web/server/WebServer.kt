@@ -29,23 +29,21 @@ class WebServer(
    private val sonos: SonosQueue,
    private val endpoints: List<Endpoint>
 ) : NanoHTTPD(port) {
-   private val queuedEndpoints: List<QueuedEndpoint> = endpoints
-      .map { it as? QueuedEndpoint }
-      .filterNotNull()
+   private val queuedEndpoints = endpoints.mapNotNull { it as? QueuedEndpoint }
 
-   private val speakersSilenceSchedulerEnabled: Boolean
-      get() = preferences.getBoolean(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER, false)
-
-   private val sonosSilenceSchedulerEnabled: Boolean
-      get() = preferences.getBoolean(PreferenceKey.ENABLE_SONOS_SILENCE_SCHEDULER, false)
-
-   private val speakersSilenceSchedule: TimeRange
-      get() = preferences.getString(PreferenceKey.SPEAKERS_SILENCE_SCHEDULE, "")!!
-         .let { TimeRange.parse(it) }
-
-   private val sonosSilenceSchedule: TimeRange
-      get() = preferences.getString(PreferenceKey.SONOS_SILENCE_SCHEDULE, "")!!
-         .let { TimeRange.parse(it) }
+//   private val speakersSilenceSchedulerEnabled: Boolean
+//      get() = preferences.getBoolean(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER, false)
+//
+//   private val sonosSilenceSchedulerEnabled: Boolean
+//      get() = preferences.getBoolean(PreferenceKey.ENABLE_SONOS_SILENCE_SCHEDULER, false)
+//
+//   private val speakersSilenceSchedule: TimeRange
+//      get() = preferences.getString(PreferenceKey.SPEAKERS_SILENCE_SCHEDULE, "")!!
+//         .let { TimeRange.parse(it) }
+//
+//   private val sonosSilenceSchedule: TimeRange
+//      get() = preferences.getString(PreferenceKey.SONOS_SILENCE_SCHEDULE, "")!!
+//         .let { TimeRange.parse(it) }
 
    override fun serve(session: IHTTPSession?): Response {
       try {
@@ -112,12 +110,12 @@ class WebServer(
 //      return newFixedLengthResponse(OK, MIME_JSON, SUCCESS_RESPONSE)
 //   }
 
-   private fun <T> extractBody(session: IHTTPSession, provider: (String) -> T): T {
-      return mutableMapOf<String, String>().let {
-         session.parseBody(it)
-         provider(it["postData"] ?: "{}")
-      }
-   }
+//   private fun <T> extractBody(session: IHTTPSession, provider: (String) -> T): T {
+//      return mutableMapOf<String, String>().let {
+//         session.parseBody(it)
+//         provider(it["postData"] ?: "{}")
+//      }
+//   }
 
 //   private fun file(session: IHTTPSession, audioFormat: AudioFormat): Response {
 //      if (!preferences.getBoolean(PreferenceKey.ENABLE_FILE_ENDPOINTS, true)) {
