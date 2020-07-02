@@ -1,6 +1,7 @@
 package com.bartlomiejpluta.ttsserver.core.lua.sandbox
 
 import com.bartlomiejpluta.ttsserver.core.lua.lib.HTTPLibrary
+import com.bartlomiejpluta.ttsserver.core.lua.lib.SonosLibrary
 import com.bartlomiejpluta.ttsserver.core.lua.lib.TTSLibrary
 import org.luaj.vm2.Globals
 import org.luaj.vm2.LoadState
@@ -14,7 +15,8 @@ import org.luaj.vm2.lib.jse.JseOsLib
 
 class SandboxFactory(
    private val httpLibrary: HTTPLibrary,
-   private val ttsLibrary: TTSLibrary
+   private val ttsLibrary: TTSLibrary,
+   private val sonosLibrary: SonosLibrary
 ) {
    fun createSandbox() = Globals().also {
       it.load(JseBaseLib())
@@ -25,6 +27,7 @@ class SandboxFactory(
       it.load(JseOsLib())
       it.load(httpLibrary)
       it.load(ttsLibrary)
+      it.load(sonosLibrary)
       LoadState.install(it)
       LuaC.install(it)
    }

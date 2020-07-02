@@ -45,4 +45,6 @@ class QueuedEndpoint(
 
    fun runWorker() = worker.start()
    fun stopWorker() = worker.interrupt()
+
+   override fun toString() = "Q[${uri.template}]"
 }

@@ -81,4 +81,5 @@ class DefaultEndpoint(
 
    private fun getData(response: LuaTable) = response.get("data").checkstring().tojstring()
 
+   override fun toString() = "D[${uri.template}]"
 }
