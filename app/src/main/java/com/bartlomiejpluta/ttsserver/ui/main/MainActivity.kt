@@ -1,5 +1,6 @@
 package com.bartlomiejpluta.ttsserver.ui.main
 
+import android.app.AlertDialog
 import android.content.*
 import android.os.Build
 import android.os.Bundle
@@ -34,12 +35,25 @@ class MainActivity : DaggerAppCompatActivity() {
    lateinit var networkUtil: NetworkUtil
 
    private val receiver = object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) {
-         (intent?.getStringExtra(ForegroundService.STATE) ?: ServiceState.STOPPED.name)
-            .let { ServiceState.valueOf(it) }
-            .let { updateViewAccordingToServiceState(it) }
+      override fun onReceive(context: Context?, intent: Intent?) = when(intent?.action) {
+         MainActivity.CHANGE_STATE -> dispatchChangeStateIntent(intent)
+         LUA_ERROR -> dispatchLuaErrorIntent(intent)
+         else -> throw UnsupportedOperationException("This action is not supported")
       }
    }
+
+   private fun dispatchChangeStateIntent(intent: Intent) {
+      (intent.getStringExtra(MainActivity.STATE) ?: ServiceState.STOPPED.name)
+         .let { ServiceState.valueOf(it) }
+         .let { updateViewAccordingToServiceState(it) }
+   }
+
+   private fun dispatchLuaErrorIntent(intent: Intent) = AlertDialog.Builder(this)
+      .setTitle(R.string.error_title)
+      .setMessage(intent.getStringExtra(MESSAGE))
+      .setPositiveButton(android.R.string.ok) { _, _ -> }
+      .create()
+      .show()
 
    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
       menuInflater.inflate(R.menu.menu_main, menu)
@@ -82,9 +96,14 @@ class MainActivity : DaggerAppCompatActivity() {
 
    override fun onResume() {
       super.onResume()
+      val filter = IntentFilter().apply {
+         addAction(MainActivity.CHANGE_STATE)
+         addAction(LUA_ERROR)
+      }
+
       LocalBroadcastManager
          .getInstance(this)
-         .registerReceiver(receiver, IntentFilter(ForegroundService.CHANGE_STATE))
+         .registerReceiver(receiver, filter)
       updateViewAccordingToServiceState(ForegroundService.state)
    }
 
@@ -113,5 +132,12 @@ class MainActivity : DaggerAppCompatActivity() {
 
          startService(it)
       }
+   }
+
+   companion object {
+      const val CHANGE_STATE = "com.bartlomiejpluta.ttsserver.service.CHANGE_STATE"
+      const val LUA_ERROR = "com.bartlomiejpluta.ttsserver.service.LUA_ERROR"
+      const val MESSAGE = "message"
+      const val STATE = "STATE"
    }
 }

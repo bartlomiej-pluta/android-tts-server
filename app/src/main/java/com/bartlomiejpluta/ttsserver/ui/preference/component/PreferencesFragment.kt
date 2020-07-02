@@ -16,9 +16,10 @@ import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.web.mime.MimeType
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
-import com.bartlomiejpluta.ttsserver.ui.preference.model.TimeRange
-import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import com.bartlomiejpluta.ttsserver.ui.preference.custom.IntEditTextPreference
+import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
+import com.bartlomiejpluta.ttsserver.ui.preference.model.TimeRange
 
 
 class PreferencesFragment : PreferenceFragmentCompat() {
@@ -35,7 +36,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
    private val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
-         (intent?.getStringExtra(ForegroundService.STATE) ?: ServiceState.STOPPED.name)
+         (intent?.getStringExtra(MainActivity.STATE) ?: ServiceState.STOPPED.name)
             .let { ServiceState.valueOf(it) }
             .let { updateViewAccordingToServiceState(it) }
       }
@@ -51,7 +52,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
       super.onResume()
       LocalBroadcastManager
          .getInstance(requireContext())
-         .registerReceiver(receiver, IntentFilter(ForegroundService.CHANGE_STATE))
+         .registerReceiver(receiver, IntentFilter(MainActivity.CHANGE_STATE))
       updateViewAccordingToServiceState(ForegroundService.state)
    }
 

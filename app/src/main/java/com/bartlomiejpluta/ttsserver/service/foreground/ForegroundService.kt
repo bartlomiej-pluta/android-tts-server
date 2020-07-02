@@ -86,8 +86,6 @@ class ForegroundService : DaggerService() {
       var state = ServiceState.STOPPED
 
       private const val WAKELOCK_TAG = "ForegroundService::lock"
-      const val CHANGE_STATE = "com.bartlomiejpluta.ttsserver.service.CHANGE_STATE"
-      const val STATE = "STATE"
       const val START = "START"
       const val STOP = "STOP"
    }

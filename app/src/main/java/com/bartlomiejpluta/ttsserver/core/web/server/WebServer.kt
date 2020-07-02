@@ -7,18 +7,16 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.QueuedEndpoint
-import com.bartlomiejpluta.ttsserver.core.web.endpoint.Worker
 import com.bartlomiejpluta.ttsserver.core.web.exception.WebException
-import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
+import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
-import com.bartlomiejpluta.ttsserver.ui.preference.model.TimeRange
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response.Status.*
 import org.json.JSONObject
+import org.luaj.vm2.LuaError
 
 
 class WebServer(
@@ -56,6 +54,8 @@ class WebServer(
          throw WebException(BAD_REQUEST, "Unknown error")
       } catch (e: WebException) {
          return handleWebException(e)
+      } catch (e: LuaError) {
+         return handleLuaError(e)
       } catch (e: Exception) {
          return handleUnknownException(e)
       }
@@ -77,6 +77,9 @@ class WebServer(
 
    private fun handleWebException(e: WebException) =
       newFixedLengthResponse(e.status, MIME_JSON, e.json)
+
+   private fun handleLuaError(e: LuaError) =
+      newFixedLengthResponse(INTERNAL_ERROR, MIME_PLAINTEXT, e.message)
 
    private fun handleUnknownException(e: Exception): Response {
       val stacktrace = when (preferences.getBoolean(PreferenceKey.ENABLE_HTTP_DEBUG, false)) {
@@ -211,8 +214,8 @@ class WebServer(
 
       LocalBroadcastManager
          .getInstance(context)
-         .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {
-            it.putExtra(ForegroundService.STATE, ServiceState.RUNNING.name)
+         .sendBroadcast(Intent(MainActivity.CHANGE_STATE).also {
+            it.putExtra(MainActivity.STATE, ServiceState.RUNNING.name)
          })
    }
 
@@ -223,8 +226,8 @@ class WebServer(
 
       LocalBroadcastManager
          .getInstance(context)
-         .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {
-            it.putExtra(ForegroundService.STATE, ServiceState.STOPPED.name)
+         .sendBroadcast(Intent(MainActivity.CHANGE_STATE).also {
+            it.putExtra(MainActivity.STATE, ServiceState.STOPPED.name)
          })
    }
 
