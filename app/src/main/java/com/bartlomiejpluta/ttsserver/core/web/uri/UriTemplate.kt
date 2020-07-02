@@ -3,7 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.web.uri
 import com.bartlomiejpluta.ttsserver.core.web.exception.UriTemplateException
 import java.util.regex.Pattern
 
-class UriTemplate private constructor(uri: String) {
+class UriTemplate private constructor(val template: String) {
    private val variables = mutableListOf<String>()
    private var pattern: Pattern
 
@@ -12,7 +12,7 @@ class UriTemplate private constructor(uri: String) {
       var variableBuilder: StringBuilder? = null
       var isVariable = false
 
-      uri.forEachIndexed { index, char ->
+      template.forEachIndexed { index, char ->
          when {
             char == '{' -> {
                if (isVariable) {

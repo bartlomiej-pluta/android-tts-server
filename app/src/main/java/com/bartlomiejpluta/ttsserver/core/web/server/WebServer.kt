@@ -8,6 +8,9 @@ import com.bartlomiejpluta.ttsserver.core.sonos.queue.SonosQueue
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.QueuedEndpoint
+import com.bartlomiejpluta.ttsserver.core.web.endpoint.Worker
 import com.bartlomiejpluta.ttsserver.core.web.exception.WebException
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
@@ -24,8 +27,12 @@ class WebServer(
    private val preferences: SharedPreferences,
    private val tts: TTSEngine,
    private val sonos: SonosQueue,
-   private val endpoints: List<DefaultEndpoint>
+   private val endpoints: List<Endpoint>
 ) : NanoHTTPD(port) {
+   private val queuedEndpoints: List<QueuedEndpoint> = endpoints
+      .map { it as? QueuedEndpoint }
+      .filterNotNull()
+
    private val speakersSilenceSchedulerEnabled: Boolean
       get() = preferences.getBoolean(PreferenceKey.ENABLE_SPEAKERS_SILENCE_SCHEDULER, false)
 
@@ -202,6 +209,8 @@ class WebServer(
    override fun start() {
       super.start()
       sonos.run()
+      queuedEndpoints.forEach { it.runWorker() }
+
       LocalBroadcastManager
          .getInstance(context)
          .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {
@@ -212,6 +221,8 @@ class WebServer(
    override fun stop() {
       super.stop()
       sonos.stop()
+      queuedEndpoints.forEach { it.stopWorker() }
+
       LocalBroadcastManager
          .getInstance(context)
          .sendBroadcast(Intent(ForegroundService.CHANGE_STATE).also {

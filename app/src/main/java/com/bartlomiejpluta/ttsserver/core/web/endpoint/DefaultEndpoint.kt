@@ -11,7 +11,6 @@ import java.io.FileInputStream
 
 class DefaultEndpoint(
    private val uri: UriTemplate,
-   private val type: EndpointType,
    private val accepts: String,
    private val method: Method,
    private val consumer: LuaClosure
@@ -22,19 +21,18 @@ class DefaultEndpoint(
          return null
       }
 
+      if ((session.headers["content-type"]?.let { it != accepts } != false)) {
+         return null
+      }
+
       val matchingResult = uri.match(session.uri)
       if (!matchingResult.matched) {
          return null
       }
 
-      val params = LuaValue.tableOf().also { params ->
-         matchingResult.variables
-            .map { LuaValue.valueOf(it.key) to LuaValue.valueOf(it.value) }
-            .forEach { params.set(it.first, it.second) }
-      }
+      val request = Request.of(extractBody(session), matchingResult.variables)
 
-
-      val response = consumer.call(LuaValue.valueOf(extractBody(session)), params).checktable()
+      val response = consumer.call(request.body, request.params).checktable()
       return parseResponse(response)
    }
 

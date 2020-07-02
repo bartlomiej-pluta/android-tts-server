@@ -13,7 +13,7 @@ class SonosQueue(
    private val preferences: SharedPreferences,
    private val networkUtil: NetworkUtil
 ) {
-   private val queue: BlockingQueue<SonosDTO> = LinkedBlockingQueue()
+   val queue: BlockingQueue<SonosDTO> = LinkedBlockingQueue()
    private var consumer: Thread? = null
 
    fun run() {
