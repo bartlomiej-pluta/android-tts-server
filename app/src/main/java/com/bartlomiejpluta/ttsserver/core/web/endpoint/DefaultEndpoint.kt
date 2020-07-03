@@ -28,7 +28,7 @@ class DefaultEndpoint(
    private fun provideResponse(response: LuaTable) = when (response.get("data")) {
       is LuaString -> getTextResponse(response)
       is LuaUserdata -> getFileResponse(response)
-      else -> throw IllegalArgumentException("Supported only string and file data types")
+      else -> throw LuaError("Supported only string and file response data types")
    }
 
    private fun getTextResponse(response: LuaTable) = newFixedLengthResponse(

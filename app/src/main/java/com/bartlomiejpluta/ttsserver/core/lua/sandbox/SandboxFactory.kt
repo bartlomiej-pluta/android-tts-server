@@ -1,6 +1,7 @@
 package com.bartlomiejpluta.ttsserver.core.lua.sandbox
 
 import com.bartlomiejpluta.ttsserver.core.lua.lib.*
+import com.bartlomiejpluta.ttsserver.core.lua.loader.ConfigLoader
 import org.luaj.vm2.Globals
 import org.luaj.vm2.LoadState
 import org.luaj.vm2.compiler.LuaC
@@ -12,6 +13,7 @@ import org.luaj.vm2.lib.jse.JseMathLib
 import org.luaj.vm2.lib.jse.JseOsLib
 
 class SandboxFactory(
+   private val configLoader: ConfigLoader,
    private val utilLibrary: UtilLibrary,
    private val serverLibrary: ServerLibrary,
    private val httpLibrary: HTTPLibrary,
@@ -32,5 +34,6 @@ class SandboxFactory(
       it.load(sonosLibrary)
       LoadState.install(it)
       LuaC.install(it)
+      configLoader.loadConfig(it)
    }
 }

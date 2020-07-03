@@ -20,7 +20,7 @@ class EndpointLoader(
 ) {
 
    fun loadEndpoints(): List<Endpoint> {
-      val scripts = context.getExternalFilesDir("Endpoints")?.listFiles() ?: emptyArray()
+      val scripts = context.getExternalFilesDir("endpoints")?.listFiles() ?: emptyArray()
 
       return scripts.mapNotNull { loadEndpoint(it) }
    }
