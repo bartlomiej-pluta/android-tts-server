@@ -47,7 +47,8 @@ class LuaModule {
 
    @Provides
    @Singleton
-   fun serverLibrary(networkUtil: NetworkUtil) = ServerLibrary(networkUtil)
+   fun serverLibrary(context: Context, networkUtil: NetworkUtil) =
+      ServerLibrary(context, networkUtil)
 
    @Provides
    @Singleton
