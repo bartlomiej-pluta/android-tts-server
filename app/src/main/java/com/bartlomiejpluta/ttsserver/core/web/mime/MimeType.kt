@@ -11,6 +11,7 @@ enum class MimeType(val mimeType: String) {
    WMA("audio/x-ms-wma"),
    WAV("audio/x-wav"),
    FLAC("audio/x-wav"),
+   TEXT("text/plain"),
    JSON("application/json");
 
    companion object {

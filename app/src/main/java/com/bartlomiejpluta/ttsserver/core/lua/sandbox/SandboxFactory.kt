@@ -14,7 +14,7 @@ import org.luaj.vm2.lib.jse.JseOsLib
 
 class SandboxFactory(
    private val configLoader: ConfigLoader,
-   private val utilLibrary: UtilLibrary,
+   private val threadLibrary: ThreadLibrary,
    private val serverLibrary: ServerLibrary,
    private val httpLibrary: HTTPLibrary,
    private val ttsLibrary: TTSLibrary,
@@ -27,7 +27,7 @@ class SandboxFactory(
       it.load(StringLib())
       it.load(JseMathLib())
       it.load(JseOsLib())
-      it.load(utilLibrary)
+      it.load(threadLibrary)
       it.load(serverLibrary)
       it.load(httpLibrary)
       it.load(ttsLibrary)

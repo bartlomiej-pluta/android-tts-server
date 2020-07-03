@@ -4,9 +4,13 @@ import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.OneArgFunction
 import org.luaj.vm2.lib.TwoArgFunction
 
-class UtilLibrary : TwoArgFunction() {
+class ThreadLibrary : TwoArgFunction() {
    override fun call(modname: LuaValue, env: LuaValue): LuaValue {
-      env.set("sleep", SleepFunction())
+      val thread = LuaValue.tableOf().apply {
+         set("sleep", SleepFunction())
+      }
+
+      env.set("thread", thread)
 
       return LuaValue.NIL
    }

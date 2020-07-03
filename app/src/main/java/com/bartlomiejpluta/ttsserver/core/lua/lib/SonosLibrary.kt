@@ -12,9 +12,9 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua
 class SonosLibrary : TwoArgFunction() {
 
    override fun call(modname: LuaValue, env: LuaValue): LuaValue {
-      val sonos = LuaValue.tableOf().also {
-         it.set("discover", DiscoverFunction())
-         it.set("of", OfFunction())
+      val sonos = LuaValue.tableOf().apply {
+         set("discover", DiscoverFunction())
+         set("of", OfFunction())
       }
 
       env.set("sonos", sonos)

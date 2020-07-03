@@ -11,9 +11,11 @@ import java.util.*
 
 class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
    override fun call(modname: LuaValue, env: LuaValue): LuaValue {
-      val tts = LuaValue.tableOf()
-      tts.set("say", SayMethod(ttsEngine))
-      tts.set("sayToFile", FileMethod(ttsEngine))
+      val tts = LuaValue.tableOf().apply {
+         set("say", SayMethod(ttsEngine))
+         set("sayToFile", FileMethod(ttsEngine))
+      }
+
       env.set("tts", tts)
 
       val audioFormats = LuaValue.tableOf()

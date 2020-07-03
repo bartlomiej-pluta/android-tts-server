@@ -27,14 +27,14 @@ class LuaModule {
    @Singleton
    fun sandboxFactory(
       configLoader: ConfigLoader,
-      utilLibrary: UtilLibrary,
+      threadLibrary: ThreadLibrary,
       serverLibrary: ServerLibrary,
       httpLibrary: HTTPLibrary,
       ttsLibrary: TTSLibrary,
       sonosLibrary: SonosLibrary
    ) = SandboxFactory(
       configLoader,
-      utilLibrary,
+      threadLibrary,
       serverLibrary,
       httpLibrary,
       ttsLibrary,
@@ -43,7 +43,7 @@ class LuaModule {
 
    @Provides
    @Singleton
-   fun utilLibrary() = UtilLibrary()
+   fun utilLibrary() = ThreadLibrary()
 
    @Provides
    @Singleton
