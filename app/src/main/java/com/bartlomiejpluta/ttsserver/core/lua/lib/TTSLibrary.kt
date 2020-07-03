@@ -3,11 +3,10 @@ package com.bartlomiejpluta.ttsserver.core.lua.lib
 import cafe.adriel.androidaudioconverter.model.AudioFormat
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import org.luaj.vm2.LuaNil
-import org.luaj.vm2.LuaString
 import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.ThreeArgFunction
 import org.luaj.vm2.lib.TwoArgFunction
-import java.lang.IllegalArgumentException
+import org.luaj.vm2.lib.jse.CoerceJavaToLua
 import java.util.*
 
 class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
@@ -42,7 +41,7 @@ class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
 
          val file = ttsEngine.createTTSFile(text.checkjstring(), lang, audioFormat)
 
-         return LuaValue.valueOf(file.absolutePath)
+         return CoerceJavaToLua.coerce(file)
       }
    }
 }

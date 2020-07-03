@@ -4,6 +4,7 @@ import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import fi.iki.elonen.NanoHTTPD.*
 import org.luaj.vm2.*
+import org.luaj.vm2.lib.jse.CoerceLuaToJava
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -24,10 +25,10 @@ class DefaultEndpoint(
       .let { provideResponse(it) }
 
 
-   private fun provideResponse(response: LuaTable) = when {
-      response.get("data") !is LuaNil -> getTextResponse(response)
-      response.get("file") !is LuaNil -> getFileResponse(response)
-      else -> throw IllegalArgumentException("Provide 'data' or 'file' in response table")
+   private fun provideResponse(response: LuaTable) = when (response.get("data")) {
+      is LuaString -> getTextResponse(response)
+      is LuaUserdata -> getFileResponse(response)
+      else -> throw IllegalArgumentException("Supported only string and file data types")
    }
 
    private fun getTextResponse(response: LuaTable) = newFixedLengthResponse(
@@ -37,9 +38,14 @@ class DefaultEndpoint(
    )
 
    private fun getFileResponse(response: LuaTable): Response? {
-      val file = File(response.get("file").checkjstring())
+      val file = CoerceLuaToJava.coerce(response.get("data"), File::class.java) as File
       val stream = BufferedInputStream(FileInputStream(file))
       val length = file.length()
+
+      if(!getCached(response)) {
+         file.delete()
+      }
+
       return newFixedLengthResponse(
          getStatus(response),
          getMimeType(response),
@@ -59,6 +65,8 @@ class DefaultEndpoint(
    private fun getMimeType(response: LuaTable) = response.get("mime").optjstring("text/plain")
 
    private fun getData(response: LuaTable) = response.get("data").checkjstring()
+
+   private fun getCached(response: LuaTable) = response.get("cached").optboolean(false)
 
    override fun toString() = "D[${uri.template}]"
 }
