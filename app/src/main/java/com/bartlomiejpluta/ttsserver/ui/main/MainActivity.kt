@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
+import com.bartlomiejpluta.ttsserver.initializer.ScriptsInitializer
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.help.HelpActivity
@@ -34,16 +35,19 @@ class MainActivity : DaggerAppCompatActivity() {
    @Inject
    lateinit var networkUtil: NetworkUtil
 
+   @Inject
+   lateinit var scriptsInitializer: ScriptsInitializer
+
    private val receiver = object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) = when(intent?.action) {
-         MainActivity.CHANGE_STATE -> dispatchChangeStateIntent(intent)
+      override fun onReceive(context: Context?, intent: Intent?) = when (intent?.action) {
+         CHANGE_STATE -> dispatchChangeStateIntent(intent)
          LUA_ERROR -> dispatchLuaErrorIntent(intent)
          else -> throw UnsupportedOperationException("This action is not supported")
       }
    }
 
    private fun dispatchChangeStateIntent(intent: Intent) {
-      (intent.getStringExtra(MainActivity.STATE) ?: ServiceState.STOPPED.name)
+      (intent.getStringExtra(STATE) ?: ServiceState.STOPPED.name)
          .let { ServiceState.valueOf(it) }
          .let { updateViewAccordingToServiceState(it) }
    }
@@ -92,12 +96,13 @@ class MainActivity : DaggerAppCompatActivity() {
       serverControlButton = findViewById(R.id.server_control_button)
       serverStatus = findViewById(R.id.server_status)
       promptText = findViewById(R.id.prompt_text)
+      scriptsInitializer.initializeOnce()
    }
 
    override fun onResume() {
       super.onResume()
       val filter = IntentFilter().apply {
-         addAction(MainActivity.CHANGE_STATE)
+         addAction(CHANGE_STATE)
          addAction(LUA_ERROR)
       }
 

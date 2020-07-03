@@ -1,12 +1,14 @@
 package com.bartlomiejpluta.ttsserver.di.module
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.bartlomiejpluta.ttsserver.core.lua.lib.*
 import com.bartlomiejpluta.ttsserver.core.lua.loader.ConfigLoader
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
+import com.bartlomiejpluta.ttsserver.initializer.ScriptsInitializer
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -61,4 +63,9 @@ class LuaModule {
    @Provides
    @Singleton
    fun sonosLibrary() = SonosLibrary()
+
+   @Provides
+   @Singleton
+   fun scriptsInitializer(context: Context, preferences: SharedPreferences) =
+      ScriptsInitializer(context, preferences)
 }
