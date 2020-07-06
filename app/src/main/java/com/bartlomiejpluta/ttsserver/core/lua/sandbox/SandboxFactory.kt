@@ -1,5 +1,6 @@
 package com.bartlomiejpluta.ttsserver.core.lua.sandbox
 
+import android.content.Context
 import com.bartlomiejpluta.ttsserver.core.lua.lib.*
 import com.bartlomiejpluta.ttsserver.core.lua.loader.ConfigLoader
 import org.luaj.vm2.Globals
@@ -13,6 +14,7 @@ import org.luaj.vm2.lib.jse.JseMathLib
 import org.luaj.vm2.lib.jse.JseOsLib
 
 class SandboxFactory(
+   private val context: Context,
    private val configLoader: ConfigLoader,
    private val threadLibrary: ThreadLibrary,
    private val serverLibrary: ServerLibrary,
@@ -20,20 +22,41 @@ class SandboxFactory(
    private val ttsLibrary: TTSLibrary,
    private val sonosLibrary: SonosLibrary
 ) {
-   fun createSandbox() = Globals().also {
-      it.load(JseBaseLib())
-      it.load(PackageLib())
-      it.load(TableLib())
-      it.load(StringLib())
-      it.load(JseMathLib())
-      it.load(JseOsLib())
-      it.load(threadLibrary)
-      it.load(serverLibrary)
-      it.load(httpLibrary)
-      it.load(ttsLibrary)
-      it.load(sonosLibrary)
-      LoadState.install(it)
-      LuaC.install(it)
-      configLoader.loadConfig(it)
+   fun createSandbox() = Globals().also { sandbox ->
+      loadStandardLibraries(sandbox)
+      loadApplicationLibraries(sandbox)
+      install(sandbox)
+      loadLuaLibraries(sandbox)
+   }
+
+   private fun loadStandardLibraries(sandbox: Globals) {
+      sandbox.load(JseBaseLib())
+      sandbox.load(PackageLib())
+      sandbox.load(TableLib())
+      sandbox.load(StringLib())
+      sandbox.load(JseMathLib())
+      sandbox.load(JseOsLib())
+   }
+
+   private fun loadApplicationLibraries(sandbox: Globals) {
+      sandbox.load(threadLibrary)
+      sandbox.load(serverLibrary)
+      sandbox.load(httpLibrary)
+      sandbox.load(ttsLibrary)
+      sandbox.load(sonosLibrary)
+   }
+
+   private fun install(sandbox: Globals) {
+      LoadState.install(sandbox)
+      LuaC.install(sandbox)
+      configLoader.loadConfig(sandbox)
+   }
+
+   private fun loadLuaLibraries(sandbox: Globals) {
+      context.assets.list("lua")
+         ?.map { it to context.assets.open("lua/$it") }
+         ?.map { (name, stream) -> name to stream.bufferedReader() }
+         ?.map { (name, reader) -> name.substringBeforeLast(".") to sandbox.load(reader, name) }
+         ?.forEach { (name, value) -> sandbox.set(name, value.call()) }
    }
 }
