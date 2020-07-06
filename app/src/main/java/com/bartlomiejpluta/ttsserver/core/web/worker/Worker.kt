@@ -3,6 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.web.worker
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
@@ -36,8 +37,9 @@ class Worker(
    private fun handleLuaError(exception: LuaError) {
       LocalBroadcastManager
          .getInstance(context)
-         .sendBroadcast(Intent(MainActivity.LUA_ERROR).also {
-            it.putExtra(MainActivity.MESSAGE, exception.message)
+         .sendBroadcast(Intent(MainActivity.POPUP).apply {
+            putExtra(MainActivity.TITLE, context.resources.getString(R.string.error))
+            putExtra(MainActivity.MESSAGE, exception.message)
          })
    }
 

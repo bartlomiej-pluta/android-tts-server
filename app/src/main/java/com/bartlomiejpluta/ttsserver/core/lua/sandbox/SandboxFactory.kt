@@ -16,6 +16,7 @@ import org.luaj.vm2.lib.jse.JseOsLib
 class SandboxFactory(
    private val context: Context,
    private val configLoader: ConfigLoader,
+   private val debugLibrary: DebugLibrary,
    private val threadLibrary: ThreadLibrary,
    private val serverLibrary: ServerLibrary,
    private val httpLibrary: HTTPLibrary,
@@ -39,6 +40,7 @@ class SandboxFactory(
    }
 
    private fun loadApplicationLibraries(sandbox: Globals) {
+      sandbox.load(debugLibrary)
       sandbox.load(threadLibrary)
       sandbox.load(serverLibrary)
       sandbox.load(httpLibrary)

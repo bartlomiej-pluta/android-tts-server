@@ -30,6 +30,7 @@ class LuaModule {
    fun sandboxFactory(
       context: Context,
       configLoader: ConfigLoader,
+      debugLibrary: DebugLibrary,
       threadLibrary: ThreadLibrary,
       serverLibrary: ServerLibrary,
       httpLibrary: HTTPLibrary,
@@ -38,6 +39,7 @@ class LuaModule {
    ) = SandboxFactory(
       context,
       configLoader,
+      debugLibrary,
       threadLibrary,
       serverLibrary,
       httpLibrary,
@@ -47,7 +49,11 @@ class LuaModule {
 
    @Provides
    @Singleton
-   fun utilLibrary() = ThreadLibrary()
+   fun debugLibrary(context: Context) = DebugLibrary(context)
+
+   @Provides
+   @Singleton
+   fun threadLibrary() = ThreadLibrary()
 
    @Provides
    @Singleton

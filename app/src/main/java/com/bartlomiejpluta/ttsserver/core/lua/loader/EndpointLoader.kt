@@ -3,6 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.lua.loader
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
@@ -44,8 +45,9 @@ class EndpointLoader(
 
    private fun handleError(exception: LuaError) = LocalBroadcastManager
       .getInstance(context)
-      .sendBroadcast(Intent(MainActivity.LUA_ERROR).also {
-         it.putExtra(MainActivity.MESSAGE, exception.message)
+      .sendBroadcast(Intent(MainActivity.POPUP).apply {
+         putExtra(MainActivity.TITLE, context.resources.getString(R.string.error))
+         putExtra(MainActivity.MESSAGE, exception.message)
       })
 
 

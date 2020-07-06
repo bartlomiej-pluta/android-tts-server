@@ -41,7 +41,7 @@ class MainActivity : DaggerAppCompatActivity() {
    private val receiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) = when (intent?.action) {
          CHANGE_STATE -> dispatchChangeStateIntent(intent)
-         LUA_ERROR -> dispatchLuaErrorIntent(intent)
+         POPUP -> dispatchLuaErrorIntent(intent)
          else -> throw UnsupportedOperationException("This action is not supported")
       }
    }
@@ -53,7 +53,7 @@ class MainActivity : DaggerAppCompatActivity() {
    }
 
    private fun dispatchLuaErrorIntent(intent: Intent) = AlertDialog.Builder(this)
-      .setTitle(R.string.error_title)
+      .setTitle(intent.getStringExtra(TITLE))
       .setMessage(intent.getStringExtra(MESSAGE))
       .setPositiveButton(android.R.string.ok) { _, _ -> }
       .create()
@@ -103,7 +103,7 @@ class MainActivity : DaggerAppCompatActivity() {
       super.onResume()
       val filter = IntentFilter().apply {
          addAction(CHANGE_STATE)
-         addAction(LUA_ERROR)
+         addAction(POPUP)
       }
 
       LocalBroadcastManager
@@ -140,9 +140,10 @@ class MainActivity : DaggerAppCompatActivity() {
    }
 
    companion object {
-      const val CHANGE_STATE = "com.bartlomiejpluta.ttsserver.service.CHANGE_STATE"
-      const val LUA_ERROR = "com.bartlomiejpluta.ttsserver.service.LUA_ERROR"
-      const val MESSAGE = "message"
+      const val CHANGE_STATE = "com.bartlomiejpluta.ttsserver.ui.main.CHANGE_STATE"
+      const val POPUP = "com.bartlomiejpluta.ttsserver.ui.main.POPUP"
+      const val TITLE = "TITLE"
+      const val MESSAGE = "MESSAGE"
       const val STATE = "STATE"
    }
 }
