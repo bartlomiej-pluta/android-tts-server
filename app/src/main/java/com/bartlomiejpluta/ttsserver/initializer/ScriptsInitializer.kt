@@ -49,7 +49,8 @@ class ScriptsInitializer(private val context: Context, private val preferences: 
    companion object {
       private const val INITIALIZED_FLAG = "flag_initialized"
       private val endpoints = mapOf(
-         "say.lua" to R.raw.say
+         "say.lua" to R.raw.say,
+         "file.lua" to R.raw.file
       )
    }
 }

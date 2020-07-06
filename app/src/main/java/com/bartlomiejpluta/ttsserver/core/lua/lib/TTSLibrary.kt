@@ -27,7 +27,8 @@ class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
 
    class SayMethod(private val ttsEngine: TTSEngine) : TwoArgFunction() {
       override fun call(text: LuaValue, language: LuaValue): LuaValue {
-         ttsEngine.performTTS(text.checkjstring(), Locale.forLanguageTag(language.checkjstring()))
+         val locale = Locale.forLanguageTag(language.checkjstring().toUpperCase(Locale.ROOT))
+         ttsEngine.performTTS(text.checkjstring(), locale)
 
          return LuaValue.NIL
       }
