@@ -62,6 +62,7 @@ class EndpointLoader(
    )
 
    private fun createQueuedEndpoint(luaTable: LuaTable): Endpoint = QueuedEndpoint(
+      context = context,
       uri = parseUri(luaTable),
       method = parseMethod(luaTable),
       accepts = parseAccepts(luaTable),

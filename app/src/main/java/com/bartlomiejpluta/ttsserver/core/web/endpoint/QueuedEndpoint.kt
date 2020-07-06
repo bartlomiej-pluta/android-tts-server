@@ -1,5 +1,6 @@
 package com.bartlomiejpluta.ttsserver.core.web.endpoint
 
+import android.content.Context
 import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import com.bartlomiejpluta.ttsserver.core.web.worker.Worker
@@ -9,19 +10,14 @@ import org.luaj.vm2.LuaClosure
 import java.util.concurrent.LinkedBlockingQueue
 
 class QueuedEndpoint(
+   context: Context,
    uri: UriTemplate,
    accepts: String?,
    method: NanoHTTPD.Method,
    consumer: LuaClosure
 ) : AbstractEndpoint(uri, accepts, method) {
    private val queue = LinkedBlockingQueue<Request>()
-   private val worker = Thread(
-      Worker(
-         queue,
-         consumer
-      )
-   ).also { it.name = uri.template }
-
+   private val worker = Thread(Worker(context, queue, consumer)).also { it.name = uri.template }
 
 
    override fun safeHit(request: Request): NanoHTTPD.Response? {
