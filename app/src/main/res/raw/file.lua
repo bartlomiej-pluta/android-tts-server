@@ -1,5 +1,5 @@
 return {
-    uri = "/tts.{ext}",
+    path = "/tts.{ext}",
     method = Method.GET,
     consumer = function(request)
         local format = (request.path.ext or "wav"):upper()

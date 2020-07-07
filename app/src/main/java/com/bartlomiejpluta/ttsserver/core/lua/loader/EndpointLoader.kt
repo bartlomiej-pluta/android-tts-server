@@ -71,7 +71,7 @@ class EndpointLoader(
       consumer = parseConsumer(luaTable)
    )
 
-   private fun parseUri(luaTable: LuaTable) = luaTable.get("uri").checkjstring()
+   private fun parseUri(luaTable: LuaTable) = luaTable.get("path").checkjstring()
       .let { UriTemplate.parse(it) }
 
    private fun parseConsumer(luaTable: LuaTable) = luaTable.get("consumer").checkclosure()

@@ -30,7 +30,7 @@ function restoreSnapshotIfLast(queueLength)
 end
 
 return {
-    uri = "/sonos",
+    path = "/sonos",
     method = Method.POST,
     accepts = Mime.JSON,
     queued = true,

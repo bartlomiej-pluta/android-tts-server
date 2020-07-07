@@ -1,5 +1,5 @@
 return {
-    uri = "/say",
+    path = "/say",
     method = Method.POST,
     queued = true,
     accepts = Mime.JSON,

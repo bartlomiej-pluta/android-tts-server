@@ -1,5 +1,5 @@
 return {
-    uri = "/cache/{filename}.{ext}",
+    path = "/cache/{filename}.{ext}",
     method = Method.GET,
     consumer = function(request)
         local filename = string.format("%s.%s", request.path.filename, request.path.ext)
