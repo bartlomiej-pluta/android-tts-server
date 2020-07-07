@@ -97,5 +97,6 @@ class WebServer(
 
    companion object {
       private const val MIME_JSON = "application/json"
+      const val DEFAULT_PORT = 8080
    }
 }

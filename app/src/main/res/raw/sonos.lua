@@ -1,9 +1,8 @@
-local announcementUrl = "http://" .. server.address .. ":8080/cache"
-local snapshot = nil
+local snapshot
 
 function prepareTTSFile(phrase, language)
     local file = tts.sayToFile(phrase, language, AudioFormat.MP3)
-    return announcementUrl .. "/" .. file:getName()
+    return string.format("%s/cache/%s", server.url, file:getName())
 end
 
 function updateSnapshotIfFirst(device)

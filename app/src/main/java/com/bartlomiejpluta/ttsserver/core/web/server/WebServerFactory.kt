@@ -13,7 +13,7 @@ class WebServerFactory(
    private val endpointLoader: EndpointLoader
 ) {
    fun createWebServer() = WebServer(
-      preferences.getInt(PreferenceKey.PORT, 8080),
+      preferences.getInt(PreferenceKey.PORT, WebServer.DEFAULT_PORT),
       context,
       preferences,
       tts,

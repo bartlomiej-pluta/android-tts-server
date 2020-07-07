@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.Context.WIFI_SERVICE
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager
+import com.bartlomiejpluta.ttsserver.core.web.server.WebServer
 import com.bartlomiejpluta.ttsserver.ui.preference.key.PreferenceKey
 import java.net.InetAddress
 
 
 class NetworkUtil(private val context: Context, private val preferences: SharedPreferences) {
    val port: Int
-      get() = preferences.getInt(PreferenceKey.PORT, 8000)
+      get() = preferences.getInt(PreferenceKey.PORT, WebServer.DEFAULT_PORT)
 
    val url: String
       get() = "http://$address:$port"
