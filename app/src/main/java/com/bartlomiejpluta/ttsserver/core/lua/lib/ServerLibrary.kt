@@ -1,7 +1,11 @@
 package com.bartlomiejpluta.ttsserver.core.lua.lib
 
 import android.content.Context
+import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bartlomiejpluta.R
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
+import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.OneArgFunction
 import org.luaj.vm2.lib.TwoArgFunction
@@ -16,6 +20,7 @@ class ServerLibrary(private val context: Context, private val networkUtil: Netwo
          set("address", networkUtil.address)
          set("url", networkUtil.url)
          set("getCachedFile", CacheFileFunction(context))
+         set("debug", DebugFunction(context))
       }
 
       env.set("server", server)
@@ -30,6 +35,18 @@ class ServerLibrary(private val context: Context, private val networkUtil: Netwo
          .takeIf { it.exists() }
          ?.let { CoerceJavaToLua.coerce(it) }
          ?: LuaValue.NIL
+   }
 
+   class DebugFunction(private val context: Context) : OneArgFunction() {
+      override fun call(arg: LuaValue): LuaValue {
+         LocalBroadcastManager
+            .getInstance(context)
+            .sendBroadcast(Intent(MainActivity.POPUP).apply {
+               putExtra(MainActivity.TITLE, context.resources.getString(R.string.debug))
+               putExtra(MainActivity.MESSAGE, arg.toString())
+            })
+
+         return LuaValue.NIL
+      }
    }
 }

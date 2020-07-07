@@ -30,28 +30,20 @@ class LuaModule {
    fun sandboxFactory(
       context: Context,
       configLoader: ConfigLoader,
-      debugLibrary: DebugLibrary,
       threadLibrary: ThreadLibrary,
       serverLibrary: ServerLibrary,
       httpLibrary: HTTPLibrary,
       ttsLibrary: TTSLibrary,
-      sonosLibrary: SonosLibrary,
-      cacheLibrary: CacheLibrary
+      sonosLibrary: SonosLibrary
    ) = SandboxFactory(
       context,
       configLoader,
-      debugLibrary,
       threadLibrary,
       serverLibrary,
       httpLibrary,
       ttsLibrary,
-      sonosLibrary,
-      cacheLibrary
+      sonosLibrary
    )
-
-   @Provides
-   @Singleton
-   fun debugLibrary(context: Context) = DebugLibrary(context)
 
    @Provides
    @Singleton
@@ -74,9 +66,6 @@ class LuaModule {
    @Singleton
    fun sonosLibrary() = SonosLibrary()
 
-   @Provides
-   @Singleton
-   fun cacheLibrary(context: Context) = CacheLibrary(context)
 
    @Provides
    @Singleton

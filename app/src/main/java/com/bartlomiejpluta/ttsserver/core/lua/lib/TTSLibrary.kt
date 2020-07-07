@@ -13,7 +13,7 @@ class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
    override fun call(modname: LuaValue, env: LuaValue): LuaValue {
       val tts = LuaValue.tableOf().apply {
          set("say", SayMethod(ttsEngine))
-         set("sayToFile", FileMethod(ttsEngine))
+         set("sayToCache", CacheMethod(ttsEngine))
       }
 
       env.set("tts", tts)
@@ -34,7 +34,7 @@ class TTSLibrary(private val ttsEngine: TTSEngine) : TwoArgFunction() {
       }
    }
 
-   class FileMethod(private val ttsEngine: TTSEngine) : ThreeArgFunction() {
+   class CacheMethod(private val ttsEngine: TTSEngine) : ThreeArgFunction() {
       override fun call(text: LuaValue, language: LuaValue, format: LuaValue): LuaValue {
          val lang = Locale.forLanguageTag(language.checkjstring())
          val audioFormat = format

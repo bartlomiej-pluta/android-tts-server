@@ -1,7 +1,7 @@
 local snapshot
 
 function prepareTTSFile(phrase, language)
-    local file = tts.sayToFile(phrase, language, AudioFormat.MP3)
+    local file = tts.sayToCache(phrase, language, AudioFormat.MP3)
     return string.format("%s/cache/%s", server.url, file:getName())
 end
 
@@ -35,6 +35,7 @@ return {
     accepts = Mime.JSON,
     queued = true,
     consumer = function(request, queueLength)
+        if(config.silenceMode()) then return end
         local body = json.decode(request.body)
         local zone = config.sonosDevices[body.zone]
 

@@ -19,13 +19,11 @@ import org.luaj.vm2.lib.jse.JseOsLib
 class SandboxFactory(
    private val context: Context,
    private val configLoader: ConfigLoader,
-   private val debugLibrary: DebugLibrary,
    private val threadLibrary: ThreadLibrary,
    private val serverLibrary: ServerLibrary,
    private val httpLibrary: HTTPLibrary,
    private val ttsLibrary: TTSLibrary,
-   private val sonosLibrary: SonosLibrary,
-   private val cacheLibrary: CacheLibrary
+   private val sonosLibrary: SonosLibrary
 ) {
    fun createSandbox() = runBlocking {
       withContext(Dispatchers.Default) {
@@ -50,13 +48,11 @@ class SandboxFactory(
    }
 
    private fun loadApplicationLibraries(sandbox: Globals) {
-      sandbox.load(debugLibrary)
-      sandbox.load(threadLibrary)
       sandbox.load(serverLibrary)
+      sandbox.load(threadLibrary)
       sandbox.load(httpLibrary)
       sandbox.load(ttsLibrary)
       sandbox.load(sonosLibrary)
-      sandbox.load(cacheLibrary)
    }
 
    private fun install(sandbox: Globals) {

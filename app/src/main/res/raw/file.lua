@@ -6,7 +6,7 @@ return {
         local audioFormat = AudioFormat[format]
         local mime = Mime[format]
 
-        local file = tts.sayToFile(request.query.phrase, request.query.lang or "en", audioFormat)
+        local file = tts.sayToCache(request.query.phrase, request.query.lang or "en", audioFormat)
 
         return {
             mime = mime,
