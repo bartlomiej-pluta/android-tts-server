@@ -32,7 +32,7 @@ class UriTemplate private constructor(val template: String) {
                ?.let { variableBuilder?.append(it) }
                ?: error("Only letters are allowed as template", index + 1)
 
-            else -> patternBuilder.append(char)
+            else -> patternBuilder.append(Pattern.quote(char.toString()))
          }
       }
 
