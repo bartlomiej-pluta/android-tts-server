@@ -35,7 +35,8 @@ class LuaModule {
       serverLibrary: ServerLibrary,
       httpLibrary: HTTPLibrary,
       ttsLibrary: TTSLibrary,
-      sonosLibrary: SonosLibrary
+      sonosLibrary: SonosLibrary,
+      cacheLibrary: CacheLibrary
    ) = SandboxFactory(
       context,
       configLoader,
@@ -44,7 +45,8 @@ class LuaModule {
       serverLibrary,
       httpLibrary,
       ttsLibrary,
-      sonosLibrary
+      sonosLibrary,
+      cacheLibrary
    )
 
    @Provides
@@ -71,6 +73,10 @@ class LuaModule {
    @Provides
    @Singleton
    fun sonosLibrary() = SonosLibrary()
+
+   @Provides
+   @Singleton
+   fun cacheLibrary(context: Context) = CacheLibrary(context)
 
    @Provides
    @Singleton

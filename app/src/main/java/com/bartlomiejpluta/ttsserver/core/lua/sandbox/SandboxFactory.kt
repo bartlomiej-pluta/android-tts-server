@@ -24,7 +24,8 @@ class SandboxFactory(
    private val serverLibrary: ServerLibrary,
    private val httpLibrary: HTTPLibrary,
    private val ttsLibrary: TTSLibrary,
-   private val sonosLibrary: SonosLibrary
+   private val sonosLibrary: SonosLibrary,
+   private val cacheLibrary: CacheLibrary
 ) {
    fun createSandbox() = runBlocking {
       withContext(Dispatchers.Default) {
@@ -55,6 +56,7 @@ class SandboxFactory(
       sandbox.load(httpLibrary)
       sandbox.load(ttsLibrary)
       sandbox.load(sonosLibrary)
+      sandbox.load(cacheLibrary)
    }
 
    private fun install(sandbox: Globals) {
