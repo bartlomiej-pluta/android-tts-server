@@ -12,19 +12,28 @@ class Request private constructor(
 
    init {
       val body = extractBody(request)
-      val pathParams = extractPathParams(matchingResult)
+      val pathParameters = extractPathParameters(matchingResult)
+      val queryVariables = extractQueryVariables(request)
 
       luaTable.set("body", body)
-      luaTable.set("params", pathParams)
+      luaTable.set("query", queryVariables)
+      luaTable.set("path", pathParameters)
    }
 
 
-   private fun extractPathParams(matchingResult: UriTemplate.MatchingResult) =
-      LuaValue.tableOf().also { params ->
+   private fun extractPathParameters(matchingResult: UriTemplate.MatchingResult) =
+      LuaValue.tableOf().also { table ->
          matchingResult.variables
             .map { LuaValue.valueOf(it.key) to LuaValue.valueOf(it.value) }
-            .forEach { params.set(it.first, it.second) }
+            .forEach { table.set(it.first, it.second) }
 
+      }
+
+   private fun extractQueryVariables(request: NanoHTTPD.IHTTPSession) =
+      LuaValue.tableOf().also { table ->
+         request.parms
+            .map { LuaValue.valueOf(it.key) to LuaValue.valueOf(it.value) }
+            .forEach { table.set(it.first, it.second) }
       }
 
    private fun extractBody(request: NanoHTTPD.IHTTPSession) =
