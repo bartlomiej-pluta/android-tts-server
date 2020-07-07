@@ -14,6 +14,18 @@ function silenceMode()
     else return from <= now or now <= to end
 end
 
+function discoverSonosDevices()
+    local output = {}
+    local devices = sonos.discover()
+
+    for _, device in ipairs(devices) do
+        output[device:getZoneGroupState():getName()] = device
+    end
+
+    return output
+end
+
 return {
-    silenceMode = silenceMode
+    silenceMode = silenceMode,
+    sonosDevices = discoverSonosDevices()
 }

@@ -3,6 +3,9 @@ package com.bartlomiejpluta.ttsserver.core.lua.sandbox
 import android.content.Context
 import com.bartlomiejpluta.ttsserver.core.lua.lib.*
 import com.bartlomiejpluta.ttsserver.core.lua.loader.ConfigLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.luaj.vm2.Globals
 import org.luaj.vm2.LoadState
 import org.luaj.vm2.compiler.LuaC
@@ -23,7 +26,13 @@ class SandboxFactory(
    private val ttsLibrary: TTSLibrary,
    private val sonosLibrary: SonosLibrary
 ) {
-   fun createSandbox() = Globals().also { sandbox ->
+   fun createSandbox() = runBlocking {
+      withContext(Dispatchers.Default) {
+         createLuaGlobals()
+      }
+   }
+
+   private fun createLuaGlobals() = Globals().also { sandbox ->
       loadStandardLibraries(sandbox)
       loadApplicationLibraries(sandbox)
       install(sandbox)
