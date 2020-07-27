@@ -2,7 +2,7 @@ package com.bartlomiejpluta.ttsserver.initializer
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream

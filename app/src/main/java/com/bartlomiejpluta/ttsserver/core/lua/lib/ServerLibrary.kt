@@ -3,7 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.lua.lib
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import org.luaj.vm2.LuaValue

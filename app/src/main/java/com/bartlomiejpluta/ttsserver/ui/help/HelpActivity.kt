@@ -3,7 +3,7 @@ package com.bartlomiejpluta.ttsserver.ui.help
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import java.util.*
 
 class HelpActivity : AppCompatActivity() {

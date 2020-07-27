@@ -8,7 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 

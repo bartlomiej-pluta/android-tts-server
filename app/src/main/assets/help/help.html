@@ -25,7 +25,7 @@
 <h1 class="code-line" data-line-start=27 data-line-end=28><a id="Defining_REST_interface_27"></a>Defining REST interface</h1>
 <p class="has-line-data" data-line-start="28" data-line-end="34">All endpoints are defined in Lua language so that you are able to freely modify them,<br>
     remove or even create new ones as you want.<br>
-    All Lua scripts are stored in <code>&lt;external_dir&gt;/Android/data/com.bartlomiejpluta/files/endpoints</code><br>
+    All Lua scripts are stored in <code>&lt;external_dir&gt;/Android/data/com.bartlomiejpluta.ttsserver/files/endpoints</code><br>
     directory. The endpoint definition is a simple Lua script, which returns a Lua table<br>
     containing some meta data about endpoints as well as the endpoint handler (called <code>consumer</code>) itself.<br>
     For example, the script for the <code>/tts.{ext}</code> endpoint is:</p>
@@ -124,7 +124,7 @@
 }
 </code></pre>
 <h2 class="code-line" data-line-start=132 data-line-end=133><a id="Config_132"></a>Config</h2>
-<p class="has-line-data" data-line-start="133" data-line-end="139">The <code>&lt;external_dir&gt;/Android/data/com.bartlomiejpluta/files/config/config.lua</code> file contains<br>
+<p class="has-line-data" data-line-start="133" data-line-end="139">The <code>&lt;external_dir&gt;/Android/data/com.bartlomiejpluta.ttsserver/files/config/config.lua</code> file contains<br>
     a script which defines a global values that are accessible for each endpoint.<br>
     Similarly to endpoints script, the <code>config.lua</code> can contain anything, however it is obligated<br>
     to return single Lua table with arbitrary data. This table will be available to every endpoint<br>

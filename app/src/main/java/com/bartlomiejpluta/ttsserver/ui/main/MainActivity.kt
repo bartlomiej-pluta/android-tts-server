@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
 import com.bartlomiejpluta.ttsserver.initializer.ScriptsInitializer
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService

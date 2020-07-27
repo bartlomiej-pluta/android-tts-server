@@ -28,7 +28,7 @@ Thanks to that you can force TTS Server to work as you want and to meet your req
 # Defining REST interface
 All endpoints are defined in Lua language so that you are able to freely modify them,
 remove or even create new ones as you want.
-All Lua scripts are stored in `<external_dir>/Android/data/com.bartlomiejpluta/files/endpoints`
+All Lua scripts are stored in `<external_dir>/Android/data/com.bartlomiejpluta.ttsserver/files/endpoints`
 directory. The endpoint definition is a simple Lua script, which returns a Lua table
 containing some meta data about endpoints as well as the endpoint handler (called `consumer`) itself.
 For example, the script for the `/tts.{ext}` endpoint is:
@@ -131,7 +131,7 @@ return {
 ``` 
 
 ## Config
-The `<external_dir>/Android/data/com.bartlomiejpluta/files/config/config.lua` file contains
+The `<external_dir>/Android/data/com.bartlomiejpluta.ttsserver/files/config/config.lua` file contains
 a script which defines a global values that are accessible for each endpoint.
 Similarly to endpoints script, the `config.lua` can contain anything, however it is obligated
 to return single Lua table with arbitrary data. This table will be available to every endpoint

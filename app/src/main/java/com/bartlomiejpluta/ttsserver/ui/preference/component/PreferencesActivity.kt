@@ -2,7 +2,7 @@ package com.bartlomiejpluta.ttsserver.ui.preference.component
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 
 class PreferencesActivity : AppCompatActivity() {
 

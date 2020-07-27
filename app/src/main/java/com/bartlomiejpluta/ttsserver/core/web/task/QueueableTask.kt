@@ -3,7 +3,7 @@ package com.bartlomiejpluta.ttsserver.core.web.task
 import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import com.bartlomiejpluta.ttsserver.core.web.dto.Request
 import com.bartlomiejpluta.ttsserver.core.web.queue.TasksQueue
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity

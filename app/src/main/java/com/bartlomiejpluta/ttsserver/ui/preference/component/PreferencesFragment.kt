@@ -11,7 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import com.bartlomiejpluta.R
+import com.bartlomiejpluta.ttsserver.R
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
