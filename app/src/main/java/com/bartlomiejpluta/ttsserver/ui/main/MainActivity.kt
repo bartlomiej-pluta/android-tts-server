@@ -122,7 +122,12 @@ class MainActivity : DaggerAppCompatActivity() {
    fun controlServer(view: View) {
       serverControlButton.isEnabled = false
       when (ForegroundService.state) {
-         ServiceState.STOPPED -> actionOnService(ForegroundService.START)
+         ServiceState.STOPPED -> {
+            serverControlButton.setImageResource(R.drawable.ic_power_warmingup)
+            serverStatus.text = getString(R.string.main_activity_server_status_warming_up)
+            promptText.text = getString(R.string.main_activity_prompt_warming_up)
+            actionOnService(ForegroundService.START)
+         }
          ServiceState.RUNNING -> actionOnService(ForegroundService.STOP)
       }
    }

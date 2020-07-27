@@ -5,8 +5,10 @@
     <string name="permission_http_server_description">Allows application to run HTTP server which provides a TTS services.</string>
 
     <string name="main_activity_server_status_down">The server is down</string>
+    <string name="main_activity_server_status_warming_up">The server is starting</string>
     <string name="main_activity_server_status_up">The server is up: %1$s</string>
     <string name="main_activity_prompt_to_run">Tap power on button to run the server</string>
+    <string name="main_activity_prompt_warming_up">Please wait…</string>
     <string name="main_activity_prompt_to_stop">Tap power off button to stop the server</string>
 
     <string name="service_notification_category_name">HTTP Server</string>
