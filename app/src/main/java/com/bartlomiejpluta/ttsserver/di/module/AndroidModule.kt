@@ -2,6 +2,7 @@ package com.bartlomiejpluta.ttsserver.di.module
 
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.ui.help.HelpActivity
+import com.bartlomiejpluta.ttsserver.ui.log.LogActivity
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import com.bartlomiejpluta.ttsserver.ui.preference.component.PreferencesActivity
 import dagger.Module
@@ -18,6 +19,9 @@ abstract class AndroidModule {
 
    @ContributesAndroidInjector
    abstract fun preferencesActivity(): PreferencesActivity
+
+   @ContributesAndroidInjector
+   abstract fun logActivity(): LogActivity
 
    @ContributesAndroidInjector
    abstract fun foregroundService(): ForegroundService

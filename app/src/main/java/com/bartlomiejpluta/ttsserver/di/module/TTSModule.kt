@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.speech.tts.TextToSpeech
 import androidx.preference.PreferenceManager
+import androidx.room.Room
+import com.bartlomiejpluta.ttsserver.core.log.database.LogDatabase
+import com.bartlomiejpluta.ttsserver.core.log.service.LogService
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatusHolder
@@ -43,12 +46,14 @@ class TTSModule {
       preferences: SharedPreferences,
       context: Context,
       tts: TTSEngine,
-      endpointLoader: EndpointLoader
+      endpointLoader: EndpointLoader,
+      logService: LogService
    ) = WebServerFactory(
       preferences,
       context,
       tts,
-      endpointLoader
+      endpointLoader,
+      logService
    )
 
    @Provides
@@ -70,4 +75,14 @@ class TTSModule {
       context: Context,
       networkUtil: NetworkUtil
    ) = ForegroundNotificationFactory(context, networkUtil)
+
+   @Provides
+   @Singleton
+   fun logDatabase(context: Context) = Room
+      .databaseBuilder(context, LogDatabase::class.java, "log.db")
+      .build()
+
+   @Provides
+   @Singleton
+   fun logService(context: Context, logDatabase: LogDatabase) = LogService(context, logDatabase)
 }

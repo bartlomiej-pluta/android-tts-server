@@ -2,6 +2,7 @@ package com.bartlomiejpluta.ttsserver.di.module
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.bartlomiejpluta.ttsserver.core.log.service.LogService
 import com.bartlomiejpluta.ttsserver.core.lua.lib.*
 import com.bartlomiejpluta.ttsserver.core.lua.loader.ConfigLoader
 import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
@@ -22,9 +23,10 @@ class LuaModule {
    fun endpointLoader(
       context: Context,
       sandboxFactory: SandboxFactory,
-      tasksQueueFactory: TasksQueueFactory
+      tasksQueueFactory: TasksQueueFactory,
+      logService: LogService
    ) =
-      EndpointLoader(context, sandboxFactory, tasksQueueFactory)
+      EndpointLoader(context, sandboxFactory, tasksQueueFactory, logService)
 
    @Provides
    @Singleton
@@ -34,17 +36,21 @@ class LuaModule {
    @Singleton
    fun sandboxFactory(
       context: Context,
+      logService: LogService,
       configLoader: ConfigLoader,
       threadLibrary: ThreadLibrary,
       serverLibrary: ServerLibrary,
+      logLibrary: LogLibrary,
       httpLibrary: HTTPLibrary,
       ttsLibrary: TTSLibrary,
       sonosLibrary: SonosLibrary
    ) = SandboxFactory(
       context,
+      logService,
       configLoader,
       threadLibrary,
       serverLibrary,
+      logLibrary,
       httpLibrary,
       ttsLibrary,
       sonosLibrary
@@ -62,6 +68,10 @@ class LuaModule {
    @Singleton
    fun serverLibrary(context: Context, networkUtil: NetworkUtil) =
       ServerLibrary(context, networkUtil)
+
+   @Provides
+   @Singleton
+   fun logLibrary(logService: LogService) = LogLibrary(logService)
 
    @Provides
    @Singleton

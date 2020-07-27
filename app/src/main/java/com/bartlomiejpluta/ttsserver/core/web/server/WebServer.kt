@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bartlomiejpluta.ttsserver.core.log.service.LogService
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.tts.status.TTSStatus
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
@@ -22,7 +23,8 @@ class WebServer(
    private val context: Context,
    private val preferences: SharedPreferences,
    private val tts: TTSEngine,
-   private val endpoints: List<Endpoint>
+   private val endpoints: List<Endpoint>,
+   private val log: LogService
 ) : NanoHTTPD(port) {
    private val queuedEndpoints = endpoints.mapNotNull { it as? QueuedEndpoint }
 
@@ -36,10 +38,13 @@ class WebServer(
 
          throw WebException(BAD_REQUEST, "Unknown error")
       } catch (e: WebException) {
+         log.error(TAG, "Web exception occurred: ${e.message}")
          return handleWebException(e)
       } catch (e: LuaError) {
+         log.error(TAG, "Lua error occurred: ${e.message}")
          return handleLuaError(e)
       } catch (e: Exception) {
+         log.fatal(TAG, "Unknown error occurred: ${e.message}")
          return handleUnknownException(e)
       }
    }
@@ -75,6 +80,7 @@ class WebServer(
 
    override fun start() {
       super.start()
+      log.info(TAG, "Web server is up")
 
       LocalBroadcastManager
          .getInstance(context)
@@ -84,6 +90,7 @@ class WebServer(
    }
 
    override fun stop() {
+      log.info(TAG, "Stopping web server...")
       super.stop()
       queuedEndpoints.forEach { it.shutdownQueue() }
 
@@ -95,6 +102,7 @@ class WebServer(
    }
 
    companion object {
+      private const val TAG = "@webserver"
       private const val MIME_JSON = "application/json"
       const val DEFAULT_PORT = 8080
    }

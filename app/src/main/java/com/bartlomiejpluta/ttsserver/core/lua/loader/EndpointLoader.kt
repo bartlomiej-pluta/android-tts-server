@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bartlomiejpluta.ttsserver.R
+import com.bartlomiejpluta.ttsserver.core.log.service.LogService
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
@@ -19,28 +20,37 @@ import java.io.File
 class EndpointLoader(
    private val context: Context,
    private val sandboxFactory: SandboxFactory,
-   private val tasksQueueFactory: TasksQueueFactory
+   private val tasksQueueFactory: TasksQueueFactory,
+   private val log: LogService
 ) {
 
    fun loadEndpoints(): List<Endpoint> {
+      sandboxFactory.refreshConfig()
+      log.info(TAG, "Loading endpoint scripts...")
       val scripts = context.getExternalFilesDir("endpoints")?.listFiles() ?: emptyArray()
 
-      return scripts.mapNotNull { loadEndpoint(it) }
+      return scripts
+         .mapNotNull { loadEndpoint(it) }
+         .also { log.info(TAG, "Loading endpoints is complete") }
    }
 
    private fun loadEndpoint(script: File): Endpoint? {
       try {
+         log.info(TAG, "Loading ${script.name} script...")
          return sandboxFactory
-            .createSandbox()
+            .createSandbox(script.name)
             .loadfile(script.absolutePath)
             .call()
             .checktable()
             .takeIf { parseEnabled(it) }
             ?.let { createEndpoint(it) }
+            ?.also { log.info(TAG, "Script ${script.name} has been loaded successfully") }
       } catch (e: LuaError) {
          handleError(e)
+         log.error(TAG, "Loading script ${script.name} failed: ${e.message}")
          return null
       } catch (e: Exception) {
+         log.error(TAG, "Loading script ${script.name} failed: ${e.message}")
          throw e
       }
    }
@@ -91,6 +101,7 @@ class EndpointLoader(
       ?: throw LuaError("Invalid HTTP method. Allowed methods are: $ALLOWED_METHODS")
 
    companion object {
+      private val TAG = "@endpoints"
       private val ALLOWED_METHODS = Method.values().joinToString(", ")
    }
 }

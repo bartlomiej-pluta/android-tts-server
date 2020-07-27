@@ -8,12 +8,18 @@ import org.luaj.vm2.lib.TwoArgFunction
 import java.io.File
 
 class ConfigLoader(context: Context) {
-   private val configDirectory = context.getExternalFilesDir("config")
+   private val configFile = File(context.getExternalFilesDir("config"), "config.lua")
+   private var cachedConfig: LuaTable? = null
+
+   fun refreshConfig(env: Globals) {
+      cachedConfig = env.loadfile(configFile.absolutePath).call().checktable()
+   }
 
    fun loadConfig(env: Globals) {
-      val configFile = File(configDirectory, "config.lua")
-      val table = env.loadfile(configFile.absolutePath).call().checktable()
-      env.load(ConfigLibrary(table))
+      cachedConfig
+         ?.let { ConfigLibrary(it) }
+         ?.let { env.load(it) }
+         ?: error("Config has not been refreshed before loading start")
    }
 
    class ConfigLibrary(private val table: LuaTable) : TwoArgFunction() {

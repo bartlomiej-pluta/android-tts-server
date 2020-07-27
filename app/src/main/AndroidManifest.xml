@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.bartlomiejpluta.ttsserver.TTSApplication"
+        android:name=".TTSApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -27,25 +27,29 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name="com.bartlomiejpluta.ttsserver.ui.help.HelpActivity"
-            android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
-
+            android:name=".ui.log.LogActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+        
         <activity
-            android:name="com.bartlomiejpluta.ttsserver.ui.preference.component.PreferencesActivity"
+            android:name=".ui.help.HelpActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.preference.component.PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:parentActivityName="com.bartlomiejpluta.ttsserver.ui.main.MainActivity" />
+            android:parentActivityName=".ui.main.MainActivity" />
 
         <service
-            android:name="com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService"
+            android:name=".service.foreground.ForegroundService"
             android:enabled="true"
             android:exported="true"
             android:permission="com.bartlomiejpluta.permission.TTS_HTTP_SERVICE" />
 
         <activity
-            android:name="com.bartlomiejpluta.ttsserver.ui.main.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

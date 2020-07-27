@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
+import com.bartlomiejpluta.ttsserver.core.log.service.LogService
 import com.bartlomiejpluta.ttsserver.core.web.server.WebServer
 import com.bartlomiejpluta.ttsserver.core.web.server.WebServerFactory
 import com.bartlomiejpluta.ttsserver.service.notification.ForegroundNotificationFactory
@@ -22,6 +23,9 @@ class ForegroundService : DaggerService() {
 
    @Inject
    lateinit var notificationFactory: ForegroundNotificationFactory
+
+   @Inject
+   lateinit var log: LogService
 
    override fun onCreate() {
       super.onCreate()
@@ -50,6 +54,7 @@ class ForegroundService : DaggerService() {
    private fun startService() {
       if (isServiceStarted) return
       isServiceStarted = true
+      log.info(TAG, "Starting service...")
       wakeLock =
          (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
             newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -62,10 +67,12 @@ class ForegroundService : DaggerService() {
       webServer?.let {
          state = ServiceState.RUNNING
          it.start()
+         log.info(TAG, "Service started successfully")
       }
    }
 
    private fun stopService() {
+      log.info(TAG, "Stopping service...")
       webServer?.stop()
       webServer = null
       wakeLock?.let {
@@ -77,6 +84,7 @@ class ForegroundService : DaggerService() {
          stopSelf()
       }
       state = ServiceState.STOPPED
+      log.info(TAG, "Service stopped successfully")
    }
 
    companion object {
@@ -85,6 +93,7 @@ class ForegroundService : DaggerService() {
       // than to place it as a static field
       var state = ServiceState.STOPPED
 
+      private const val TAG = "@service"
       private const val WAKELOCK_TAG = "ForegroundService::lock"
       const val START = "START"
       const val STOP = "STOP"

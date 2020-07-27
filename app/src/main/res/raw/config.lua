@@ -18,8 +18,11 @@ function discoverSonosDevices()
     local output = {}
     local devices = sonos.discover()
 
+    log.info("Discovering Sonos devices...")
     for _, device in ipairs(devices) do
-        output[device:getZoneGroupState():getName()] = device
+        local name = device:getZoneGroupState():getName()
+        output[name] = device
+        log.info("Discovered '" .. name .. "' as " .. tostring(device))
     end
 
     return output

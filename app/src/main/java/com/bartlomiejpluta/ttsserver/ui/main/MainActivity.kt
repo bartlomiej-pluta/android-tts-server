@@ -16,6 +16,7 @@ import com.bartlomiejpluta.ttsserver.initializer.ScriptsInitializer
 import com.bartlomiejpluta.ttsserver.service.foreground.ForegroundService
 import com.bartlomiejpluta.ttsserver.service.state.ServiceState
 import com.bartlomiejpluta.ttsserver.ui.help.HelpActivity
+import com.bartlomiejpluta.ttsserver.ui.log.LogActivity
 import com.bartlomiejpluta.ttsserver.ui.preference.component.PreferencesActivity
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -68,6 +69,7 @@ class MainActivity : DaggerAppCompatActivity() {
       when (item.itemId) {
          R.id.open_preferences -> startActivity(Intent(this, PreferencesActivity::class.java))
          R.id.open_help -> startActivity(Intent(this, HelpActivity::class.java))
+         R.id.open_logs -> startActivity(Intent(this, LogActivity::class.java))
       }
 
       return super.onOptionsItemSelected(item)
