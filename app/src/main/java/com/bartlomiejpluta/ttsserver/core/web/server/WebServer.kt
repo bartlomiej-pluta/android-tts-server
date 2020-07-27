@@ -75,7 +75,6 @@ class WebServer(
 
    override fun start() {
       super.start()
-      queuedEndpoints.forEach { it.runWorker() }
 
       LocalBroadcastManager
          .getInstance(context)
@@ -86,7 +85,7 @@ class WebServer(
 
    override fun stop() {
       super.stop()
-      queuedEndpoints.forEach { it.stopWorker() }
+      queuedEndpoints.forEach { it.shutdownQueue() }
 
       LocalBroadcastManager
          .getInstance(context)

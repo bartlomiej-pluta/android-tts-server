@@ -8,6 +8,7 @@ import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.DefaultEndpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.Endpoint
 import com.bartlomiejpluta.ttsserver.core.web.endpoint.QueuedEndpoint
+import com.bartlomiejpluta.ttsserver.core.web.queue.TasksQueueFactory
 import com.bartlomiejpluta.ttsserver.core.web.uri.UriTemplate
 import com.bartlomiejpluta.ttsserver.ui.main.MainActivity
 import fi.iki.elonen.NanoHTTPD.Method
@@ -17,7 +18,8 @@ import java.io.File
 
 class EndpointLoader(
    private val context: Context,
-   private val sandboxFactory: SandboxFactory
+   private val sandboxFactory: SandboxFactory,
+   private val tasksQueueFactory: TasksQueueFactory
 ) {
 
    fun loadEndpoints(): List<Endpoint> {
@@ -57,18 +59,19 @@ class EndpointLoader(
    }
 
    private fun createDefaultEndpoint(luaTable: LuaTable): Endpoint = DefaultEndpoint(
+      consumer = parseConsumer(luaTable),
       uri = parseUri(luaTable),
       method = parseMethod(luaTable),
-      accepts = parseAccepts(luaTable),
-      consumer = parseConsumer(luaTable)
+      accepts = parseAccepts(luaTable)
    )
 
    private fun createQueuedEndpoint(luaTable: LuaTable): Endpoint = QueuedEndpoint(
       context = context,
+      queue = tasksQueueFactory.create(),
+      consumer = parseConsumer(luaTable),
       uri = parseUri(luaTable),
       method = parseMethod(luaTable),
-      accepts = parseAccepts(luaTable),
-      consumer = parseConsumer(luaTable)
+      accepts = parseAccepts(luaTable)
    )
 
    private fun parseUri(luaTable: LuaTable) = luaTable.get("path").checkjstring()

@@ -8,6 +8,7 @@ import com.bartlomiejpluta.ttsserver.core.lua.loader.EndpointLoader
 import com.bartlomiejpluta.ttsserver.core.lua.sandbox.SandboxFactory
 import com.bartlomiejpluta.ttsserver.core.tts.engine.TTSEngine
 import com.bartlomiejpluta.ttsserver.core.util.NetworkUtil
+import com.bartlomiejpluta.ttsserver.core.web.queue.TasksQueueFactory
 import com.bartlomiejpluta.ttsserver.initializer.ScriptsInitializer
 import dagger.Module
 import dagger.Provides
@@ -18,8 +19,12 @@ class LuaModule {
 
    @Provides
    @Singleton
-   fun endpointLoader(context: Context, sandboxFactory: SandboxFactory) =
-      EndpointLoader(context, sandboxFactory)
+   fun endpointLoader(
+      context: Context,
+      sandboxFactory: SandboxFactory,
+      tasksQueueFactory: TasksQueueFactory
+   ) =
+      EndpointLoader(context, sandboxFactory, tasksQueueFactory)
 
    @Provides
    @Singleton
@@ -44,6 +49,10 @@ class LuaModule {
       ttsLibrary,
       sonosLibrary
    )
+
+   @Provides
+   @Singleton
+   fun tasksQueueFactory() = TasksQueueFactory()
 
    @Provides
    @Singleton

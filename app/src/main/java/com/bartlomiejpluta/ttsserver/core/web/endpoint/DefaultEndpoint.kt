@@ -10,10 +10,10 @@ import java.io.File
 import java.io.FileInputStream
 
 class DefaultEndpoint(
+   private val consumer: LuaClosure,
    uri: UriTemplate,
-   accepts: String?,
    method: Method,
-   private val consumer: LuaClosure
+   accepts: String?
 ) : AbstractEndpoint(uri, accepts, method) {
 
    override fun safeHit(request: Request) = request.luaTable

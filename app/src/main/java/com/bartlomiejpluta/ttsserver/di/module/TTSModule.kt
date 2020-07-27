@@ -62,7 +62,7 @@ class TTSModule {
 
    @Provides
    @Singleton
-   fun adudioConverter(context: Context) = AudioConverter(context)
+   fun audioConverter(context: Context) = AudioConverter(context)
 
    @Provides
    @Singleton
